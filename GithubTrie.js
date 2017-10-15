@@ -2,7 +2,7 @@ console.log('Ignacio: running GithubTrie');
 (function() {
 
 	const HEIGHT = 31;
-	const CLEAN_REGEX = /\(|\)|\[|\]|{|}/g;
+	const CLEAN_REGEX = /\(|\)|\[|\]|{|}|\.|,/g;
 
 	function time() {
 		return (new Date()).getTime();
@@ -97,10 +97,7 @@ console.log('Ignacio: running GithubTrie');
 		for (const word of textarea.value.split(' ')) {
 			if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
 				let currentWord = word;
-				if (event.keyCode === 8) {
-					currentWord = currentWord.substr(0, currentWord.length - 1);
-				}
-				currentWord = currentWord.replace(/\(|\)|\[|\]|{|}/g, ' ').split(' ');
+				currentWord = currentWord.replace(CLEAN_REGEX, ' ').split(' ');
 				return currentWord[currentWord.length - 1];
 			}
 			charIndex += word.length + 1; // 1 due to the space
