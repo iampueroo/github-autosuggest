@@ -123,6 +123,10 @@ console.log('Ignacio: running GithubTrie');
 		if (event.keyCode !== 13 || !words.length || !words[0].length) {
 			return;
 		}
+		if (words[0] === getCurrentWord(e)) {
+			return;
+		}
+
 		e.preventDefault();
 		e.stopImmediatePropagation();
 		e.target.value = replaceCurrentWord(e.target, words[0]);
