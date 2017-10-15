@@ -2,7 +2,7 @@ console.log('Ignacio: running GithubTrie');
 (function() {
 
 	const HEIGHT = 31;
-	const CLEAN_REGEX = /\(|\)|\[|\]|{|}|\.|,/g;
+	const CLEAN_REGEX = /\(|\)|\[|\]|{|}|\.|,|\n/g;
 
 	function time() {
 		return (new Date()).getTime();
@@ -119,7 +119,7 @@ console.log('Ignacio: running GithubTrie');
 		throw new Error('FUCK');
 	}
 
-	const onEnter = (e, word) => {
+	const onEnter = e => {
 		if (event.keyCode !== 13 || !words.length || !words[0].length) {
 			return;
 		}
@@ -127,6 +127,7 @@ console.log('Ignacio: running GithubTrie');
 		e.stopImmediatePropagation();
 		e.target.value = replaceCurrentWord(e.target, words[0]);
 		clearToolTip();
+		words = [];
 	}
 
 	var getToolTip = () => {
