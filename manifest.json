@@ -1,0 +1,14 @@
+{
+   "content_scripts": [ {
+      "js": ["textarea-caret-position.js", "GithubTrie.js"],
+      "css": ["GithubTrie.css"],
+      "matches": [ "https://github.com/*"]
+   } ],
+   "description": "Autosuggest for Github commit comments",
+   "homepage_url": "https://github.com",
+   "manifest_version": 2,
+   "minimum_chrome_version": "20.0",
+   "name": "Github Comment Autosuggest",
+   "permissions": [ "https://github.com/*"],
+   "version": "0.1"
+}
