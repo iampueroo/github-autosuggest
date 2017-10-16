@@ -169,6 +169,7 @@
 		const tooltip = getToolTip();
 		tooltip.innerHTML = '';
 		tooltip.classList.add('ignacio-hidden');
+		tooltip.remove();
 	}
 
 	const buildTrie = () => {
@@ -205,14 +206,14 @@
 		words = [];
 		const tooltip = getToolTip();
 		if (!event.target || !event.target.classList.contains('comment-form-textarea')) {
-			tooltip.innerHTML = '';
+			clearToolTip();
 			return;
 		}
 
 		const currentWord = getCurrentWord(event);
 
 		if (!currentWord) {
-			tooltip.innerHTML = '';
+			clearToolTip();
 			return;
 		}
 
