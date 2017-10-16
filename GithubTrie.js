@@ -1,8 +1,13 @@
-console.log('Ignacio: running GithubTrie');
 (function() {
 
 	const HEIGHT = 31;
 	const CLEAN_REGEX = /\(|\)|\[|\]|{|}|\.|,|`|\n|;/g;
+
+	function log(...args) {
+		if (window.logmeplease) {
+			console.log(...args);
+		}
+	}
 
 	function time() {
 		return (new Date()).getTime();
@@ -184,14 +189,14 @@ console.log('Ignacio: running GithubTrie');
 	};
 
 	const onFocus = event => {
-		console.log('On focus');
+		log('On focus');
 		if (!event.target || !event.target.classList.contains('comment-form-textarea')) {
 			return;
 		}
 		const start = time();
-		console.log('Building trie...');
+		log('Building trie...');
 		const trie = buildTrie();
-		console.log(`trie built ${time() - start}ms (${trie.root.words().length} words)`);
+		log(`trie built ${time() - start}ms (${trie.root.words().length} words)`);
 		event.target.addEventListener('keydown', onEnter)
 		event.target.addEventListener('keyup', onKeyUp(trie))
 	};
@@ -217,7 +222,7 @@ console.log('Ignacio: running GithubTrie');
 		} else {
 			clearToolTip();
 		}
-		console.log(`Current word: ${currentWord}. Found word: ${words[0] || ''}`);
+		log(`Current word: ${currentWord}. Found word: ${words[0] || ''}`);
 	}
 
 	document.addEventListener('focusin', onFocus);
