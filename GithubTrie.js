@@ -2,7 +2,7 @@ console.log('Ignacio: running GithubTrie');
 (function() {
 
 	const HEIGHT = 31;
-	const CLEAN_REGEX = /\(|\)|\[|\]|{|}|\.|,|\n/g;
+	const CLEAN_REGEX = /\(|\)|\[|\]|{|}|\.|,|`|\n/g;
 
 	function time() {
 		return (new Date()).getTime();
