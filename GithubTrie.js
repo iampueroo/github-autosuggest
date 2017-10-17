@@ -176,19 +176,23 @@
 	}
 
 	const buildTrie = () => {
-		var names = Array.prototype.slice.call(document.querySelectorAll('.pl-c1, .pl-smi')).map(e => e.innerHTML);
-		var trie = new Trie();
+		const words = [];
+		const names = Array.prototype.slice.call(document.querySelectorAll('.pl-c1, .pl-smi')).map(e => e.innerHTML);
+		const trie = new Trie();
 		for (const name of names) {
-			trie.addWord(name);
+			words.push(name);
 		}
-		var lines = Array.prototype.slice.call(document.querySelectorAll('.pl-s1')).forEach(e => {
-			const words = e.textContent.replace(CLEAN_REGEX, ' ').trim().split(' ');
-			for (const word of words) {
-				if (word.length > 3) {
-					trie.addWord(word);
-				}
+		const lines = Array.prototype.slice.call(document.querySelectorAll('.pl-s1')).forEach(e => {
+			const tokens = e.textContent.replace(CLEAN_REGEX, ' ').trim().split(' ');
+			for (const token of tokens) {
+				words.push(token);
 			}
 		});
+		for (const word of words) {
+			if (word.length > 3) {
+				trie.addWord(word);
+			}
+		}
 		return trie;
 	};
 
