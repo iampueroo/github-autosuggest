@@ -23,7 +23,6 @@
 		return offset;
 	}
 
-
 	class Node {
 
 		constructor(char) {
@@ -45,7 +44,7 @@
 				words.push(this.char);
 			}
 			for (const key of Object.keys(this.children)) {
-				for (const word of this.children[key].words()) {
+				for (const word of this.children[key.toLowerCase()].words()) {
 					words.push(this.char + word);
 				}
 			}
@@ -61,11 +60,13 @@
 
 		addWord(word) {
 			let node = this.root;
+			let lowerChar;
 			for (const char of word) {
-				if (!node.children[char]) {
-					node.children[char] = new Node(char);
+				lowerChar = char.toLowerCase();
+				if (!node.children[lowerChar]) {
+					node.children[lowerChar] = new Node(char);
 				}
-				node = node.children[char];
+				node = node.children[lowerChar];
 			}
 			node.setIsWord(true);
 		}
@@ -83,11 +84,13 @@
 
 		get(word) {
 			let node = this.root;
+			let lowerChar;
 			for (const char of word) {
-				if (!node.children[char]) {
+				lowerChar = char.toLowerCase();
+				if (!node.children[lowerChar]) {
 					return;
 				}
-				node = node.children[char];
+				node = node.children[lowerChar];
 			}
 			return node;
 		}
