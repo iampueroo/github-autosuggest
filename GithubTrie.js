@@ -138,7 +138,7 @@
 		e.preventDefault();
 		e.stopImmediatePropagation();
 		e.target.value = replaceCurrentWord(e.target, words[0]);
-		clearToolTip();
+		removeTooltip();
 		words = [];
 	}
 
@@ -168,7 +168,7 @@
 		tooltip.classList.remove('ignacio-hidden');
 	}
 
-	const clearToolTip = () => {
+	const removeTooltip = () => {
 		const tooltip = getToolTip();
 		tooltip.innerHTML = '';
 		tooltip.classList.add('ignacio-hidden');
@@ -213,14 +213,14 @@
 		words = [];
 		const tooltip = getToolTip();
 		if (!event.target || !event.target.classList.contains('comment-form-textarea')) {
-			clearToolTip();
+			removeTooltip();
 			return;
 		}
 
 		const currentWord = getCurrentWord(event);
 
 		if (!currentWord) {
-			clearToolTip();
+			removeTooltip();
 			return;
 		}
 
@@ -228,7 +228,7 @@
 		if (words.length && words[0] !== currentWord) {
 			showToolTip(words[0], event.target);
 		} else {
-			clearToolTip();
+			removeTooltip();
 		}
 		log(`Current word: ${currentWord}. Found word: ${words[0] || ''}`);
 	}
