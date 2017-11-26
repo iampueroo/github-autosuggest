@@ -44,7 +44,7 @@
 				words.push(this.char);
 			}
 			for (const key of Object.keys(this.children)) {
-				for (const word of this.children[key.toLowerCase()].words()) {
+				for (const word of this.children[key].words()) {
 					words.push(this.char + word);
 				}
 			}
@@ -56,19 +56,19 @@
 
 		constructor() {
 			this.root = new Node('');
+			this.size = 0;
 		}
 
 		addWord(word) {
 			let node = this.root;
-			let lowerChar;
 			for (const char of word) {
-				lowerChar = char.toLowerCase();
-				if (!node.children[lowerChar]) {
-					node.children[lowerChar] = new Node(char);
+				if (!node.children[char]) {
+					node.children[char] = new Node(char);
 				}
-				node = node.children[lowerChar];
+				node = node.children[char];
 			}
 			node.setIsWord(true);
+			this.size++;
 		}
 
 		contains(word) {
@@ -77,6 +77,9 @@
 		}
 
 		find(prefix) {
+			if (!prefix) {
+				return '';
+			}
 			const node = this.get(prefix);
 			prefix = prefix.substr(0, prefix.length - 1);
 			return (node ? node.words() : []).map(w => prefix + w);
@@ -86,13 +89,20 @@
 			let node = this.root;
 			let lowerChar;
 			for (const char of word) {
-				lowerChar = char.toLowerCase();
-				if (!node.children[lowerChar]) {
+				let lowerChar = char.toLowerCase();
+				if (node.children[char]) {
+					node = node.children[char];
+				} else if (node.children[lowerChar]) {
+					node = node.children[lowerChar];
+				} else {
 					return;
 				}
-				node = node.children[lowerChar];
 			}
 			return node;
+		}
+
+		size() {
+			return this.size;
 		}
 	}
 
