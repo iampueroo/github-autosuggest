@@ -12,7 +12,7 @@ function getFirstParent(el, selector) {
 }
 
 function log(...args) {
-	if (true || window.logmeplease) {
+	if (window.logmeplease) {
 		console.log(...args);
 	}
 }
@@ -187,6 +187,10 @@ const replaceCurrentWord = (textarea, replace) => {
 	throw new Error('FUCK');
 }
 
+const is_in_block_format = (textarea) => {
+	return textarea.value.split(/`|``/g).length % 2 === 0;
+}
+
 const onEnter = e => {
 	if (event.keyCode !== 13 || !words.length || !words[0].length) {
 		return;
@@ -197,7 +201,13 @@ const onEnter = e => {
 
 	e.preventDefault();
 	e.stopImmediatePropagation();
-	e.target.value = replaceCurrentWord(e.target, words[0]);
+	let word = words[0];
+	if (is_in_block_format(e.target)) {
+		word += '`';
+	} else {
+		word = '`' + word + '`';
+	}
+	e.target.value = replaceCurrentWord(e.target, word);
 	removeTooltip();
 	words = [];
 }
@@ -251,7 +261,6 @@ const getWords = (node) => {
 			words.push(token);
 			const split_words = token.split(SPLIT_REGEX);
 			if (split_words.length > 1) {
-				console.log(token, split_words);
 				split_words.forEach(w => words.push(w));
 			}
 		}
@@ -302,7 +311,7 @@ const onKeyUp = trie => event => {
 		removeTooltip();
 	}
 	log(`Current word: ${currentWord}. Found ${words.length} words`);
-	words.forEach(w => console.log(`\n${w}`));
+	words.forEach(w => log(`\n${w}`));
 }
 
 document.addEventListener('focusin', onFocus);
