@@ -1,7 +1,8 @@
 (function() {
 
 	const HEIGHT = 31;
-	const CLEAN_REGEX = /\(|\)|\[|\]|{|}|\.|,|`|\n|;|->/g;
+	const CLEAN_REGEX = /\(|\)|\[|\]|{|}|\.|,|`|\n|;/g;
+	const SPLIT_REGEX = /->|=>/g;
 
 	function getFirstParent(el, selector) {
 		if (!el.parentElement) {
@@ -30,6 +31,10 @@
 			element = element.offsetParent;
 		}
 		return offset;
+	}
+
+	function clean(s) {
+		return s.replace(CLEAN_REGEX, ' ');
 	}
 
 	class Node {
@@ -161,7 +166,7 @@
 		for (const word of textarea.value.split(' ')) {
 			if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
 				let currentWord = word;
-				currentWord = currentWord.replace(CLEAN_REGEX, ' ').split(' ');
+				currentWord = clean(currentWord).split(' ');
 				return currentWord[currentWord.length - 1];
 			}
 			charIndex += word.length + 1; // 1 due to the space
@@ -171,7 +176,7 @@
 	const replaceCurrentWord = (textarea, replace) => {
 		const startIndex = textarea.selectionStart;
 		let charIndex = 0;
-		let currentValue = textarea.value.replace(CLEAN_REGEX, ' ').split(' ');
+		let currentValue = clean(textarea.value).split(' ');
 		for (const word of currentValue) {
 			if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
 				let splitValue = textarea.value.split('');
@@ -180,6 +185,8 @@
 			}
 			charIndex += word.length + 1; // 1 due to the space
 		}
+		console.error('textarea', textarea.value);
+		console.error('replace', replace);
 		throw new Error('FUCK');
 	}
 
@@ -239,12 +246,18 @@
 			words.push(name);
 		}
 		const lines = Array.prototype.slice.call(node.querySelectorAll('.pl-s1')).forEach(e => {
-			const tokens = e.textContent.replace(CLEAN_REGEX, ' ').trim().split(' ');
+			const tokens = clean(e.textContent).trim().split(' ');
 			for (const token of tokens) {
-				if (token.length > 3) {
-					words.push(token);
+				if (token.length < 5) {
+					continue;
+				}
+				words.push(token);
+				const split_words = token.split(SPLIT_REGEX);
+				if (split_words.length > 1) {
+					split_words.forEach(w => words.push(w));
 				}
 			}
+
 		});
 		return words;
 	};
