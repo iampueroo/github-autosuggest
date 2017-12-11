@@ -253,7 +253,14 @@ const getWords = (node) => {
 		words.push(name);
 	}
 	const lines = Array.prototype.slice.call(node.querySelectorAll('.pl-s1')).forEach(e => {
-		const tokens = clean(e.textContent).trim().split(' ');
+		let content = e.textContent;
+		for (let i = 0; i < e.children.length; i++) {
+			// Remove textContent from comments, as they're not helpful
+			if (e.children[i].classList.contains('pl-c')) {
+				content = content.replace(e.children[i].textContent, '');
+			}
+		}
+		const tokens = clean(content).trim().split(' ');
 		for (const token of tokens) {
 			if (token.length < 5) {
 				continue;
@@ -264,7 +271,6 @@ const getWords = (node) => {
 				split_words.forEach(w => words.push(w));
 			}
 		}
-
 	});
 	return words;
 };
