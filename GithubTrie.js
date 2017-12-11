@@ -1,7 +1,16 @@
 (function() {
 
 	const HEIGHT = 31;
-	const CLEAN_REGEX = /\(|\)|\[|\]|{|}|\.|,|`|\n|;/g;
+	const CLEAN_REGEX = /\(|\)|\[|\]|{|}|\.|,|`|\n|;|->/g;
+
+	function getFirstParent(el, selector) {
+		if (!el.parentElement) {
+			return false;
+		} else if (el.parentElement.matches(selector)) {
+			return el.parentElement;
+		}
+		return getFirstParent(el.parentElement, selector);
+	}
 
 	function log(...args) {
 		if (window.logmeplease) {
@@ -27,7 +36,14 @@
 
 		constructor(char) {
 			this.char = char
+			this.lowerChar = char.toLowerCase();
 			this.children = {};
+			this.count = 1;
+			this.priority = 0; // Binary weights
+		}
+
+		setPriority(_) {
+			this.priority = _;
 		}
 
 		isWord() {
@@ -38,14 +54,25 @@
 			this._isWord = !!_;
 		}
 
-		words() {
-			const words = [];
+		upCount() {
+			this.count++;
+		}
+
+		wordNodes() {
+			const words = []; // ordered list of { node, string}
 			if (this.isWord()) {
-				words.push(this.char);
+				words.push({
+					s: this.char, // string
+					n: this, // node
+				})
 			}
 			for (const key of Object.keys(this.children)) {
-				for (const word of this.children[key].words()) {
-					words.push(this.char + word);
+				const childNodes = this.children[key].wordNodes();
+				for (const d of childNodes) {
+					words.push({
+						s: this.char + d.s,
+						n: d.n,
+					});
 				}
 			}
 			return words;
@@ -59,6 +86,10 @@
 			this.size = 0;
 		}
 
+		addWords(words) {
+			words.forEach(w => this.addWord(w));
+		}
+
 		addWord(word) {
 			let node = this.root;
 			for (const char of word) {
@@ -68,7 +99,20 @@
 				node = node.children[char];
 			}
 			node.setIsWord(true);
+			node.upCount();
 			this.size++;
+		}
+
+		markSpecial(words) {
+			if (typeof words === 'string') {
+				words = [words];
+			}
+			words.forEach(w => {
+				if (!this.get(w)) {
+					this.addWord(w);
+				}
+				this.get(w).setPriority(1);
+			})
 		}
 
 		contains(word) {
@@ -81,8 +125,10 @@
 				return '';
 			}
 			const node = this.get(prefix);
+			const words = node ? node.wordNodes() : [];
+			console.log(words);
 			prefix = prefix.substr(0, prefix.length - 1);
-			return (node ? node.words() : []).map(w => prefix + w);
+			return words.sort((a,b) => b.n.priority - a.n.priority).map(w => prefix + w.s);
 		}
 
 		get(word) {
@@ -185,25 +231,22 @@
 		tooltip.remove();
 	}
 
-	const buildTrie = () => {
+	const getWords = (node) => {
 		const words = [];
-		const names = Array.prototype.slice.call(document.querySelectorAll('.pl-c1, .pl-smi')).map(e => e.innerHTML);
+		const names = Array.prototype.slice.call(node.querySelectorAll('.pl-c1, .pl-smi')).map(e => e.innerHTML);
 		const trie = new Trie();
 		for (const name of names) {
 			words.push(name);
 		}
-		const lines = Array.prototype.slice.call(document.querySelectorAll('.pl-s1')).forEach(e => {
+		const lines = Array.prototype.slice.call(node.querySelectorAll('.pl-s1')).forEach(e => {
 			const tokens = e.textContent.replace(CLEAN_REGEX, ' ').trim().split(' ');
 			for (const token of tokens) {
-				words.push(token);
+				if (token.length > 3) {
+					words.push(token);
+				}
 			}
 		});
-		for (const word of words) {
-			if (word.length > 3) {
-				trie.addWord(word);
-			}
-		}
-		return trie;
+		return words;
 	};
 
 	const onFocus = event => {
@@ -213,8 +256,15 @@
 		}
 		const start = time();
 		log('Building trie...');
-		const trie = buildTrie();
-		log(`trie built ${time() - start}ms (${trie.root.words().length} words)`);
+		const trie = new Trie();
+		const words = getWords(window.document);
+		trie.addWords(words);
+		const inline_comment_div = getFirstParent(event.target, 'tr.inline-comments');
+		if (inline_comment_div && inline_comment_div.previousSibling) {
+			const special_words = getWords(inline_comment_div.previousSibling);
+			trie.markSpecial(special_words);
+		}
+		log(`trie built ${time() - start}ms (${trie.size} words)`);
 		event.target.addEventListener('keydown', onEnter)
 		event.target.addEventListener('keyup', onKeyUp(trie))
 	};
@@ -240,9 +290,9 @@
 		} else {
 			removeTooltip();
 		}
-		log(`Current word: ${currentWord}. Found word: ${words[0] || ''}`);
+		log(`Current word: ${currentWord}. Found ${words.length} words`);
+		words.forEach(w => console.log(`\n${w}`));
 	}
 
 	document.addEventListener('focusin', onFocus);
-
 })();

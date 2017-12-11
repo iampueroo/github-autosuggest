@@ -10,5 +10,5 @@
    "minimum_chrome_version": "20.0",
    "name": "Github Comment Autosuggest",
    "permissions": [ "https://github.com/*"],
-   "version": "0.1"
+   "version": "0.15"
 }
