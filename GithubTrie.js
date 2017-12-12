@@ -156,13 +156,12 @@ class Trie {
 
 let words = [];
 
-const getCurrentWord = (event) => {
-	const textarea = event.target;
+const getCurrentWord = (textarea) => {
 	const startIndex = textarea.selectionStart;
 	let charIndex = 0;
 	for (const word of textarea.value.split(' ')) {
 		if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
-			let currentWord = clean(word).split(' ');
+			let currentWord = clean(word).split(' ').filter(w => w !== '');
 			return currentWord[currentWord.length - 1];
 		}
 		charIndex += word.length + 1; // 1 due to the space
@@ -201,7 +200,7 @@ const onEnter = e => {
 	if (e.keyCode !== 13 || !words.length || !words[0].length) {
 		return;
 	}
-	if (words[0] === getCurrentWord(e)) {
+	if (words[0] === getCurrentWord(e.target)) {
 		return;
 	}
 
@@ -294,7 +293,6 @@ const getWords = (node) => {
 };
 
 const onFocus = event => {
-	log('On focus');
 	if (!event.target || !event.target.classList.contains('comment-form-textarea')) {
 		return;
 	}
@@ -332,7 +330,7 @@ const onKeyUp = trie => event => {
 		return;
 	}
 
-	const currentWord = getCurrentWord(event);
+	const currentWord = getCurrentWord(event.target);
 
 	if (!currentWord) {
 		removeTooltip();
