@@ -156,18 +156,22 @@ class Trie {
 
 let words = [];
 
-const getCurrentWord = event => {
+const getCurrentWord = (event) => {
 	const textarea = event.target;
 	const startIndex = textarea.selectionStart;
 	let charIndex = 0;
 	for (const word of textarea.value.split(' ')) {
 		if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
-			let currentWord = word;
-			currentWord = clean(currentWord).split(' ');
+			let currentWord = clean(word).split(' ');
 			return currentWord[currentWord.length - 1];
 		}
 		charIndex += word.length + 1; // 1 due to the space
 	}
+	throw new Error('shit');
+};
+
+const getNextCharacter = textarea => {
+	return textarea.value[textarea.selectionStart];
 };
 
 const replaceCurrentWord = (textarea, replace) => {
@@ -187,12 +191,14 @@ const replaceCurrentWord = (textarea, replace) => {
 	throw new Error('FUCK');
 }
 
-const is_in_block_format = (textarea) => {
+const isInOpenBacktick = (textarea) => {
 	return textarea.value.split(/`|``/g).length % 2 === 0;
 }
 
+let justAdded = false;
+
 const onEnter = e => {
-	if (event.keyCode !== 13 || !words.length || !words[0].length) {
+	if (e.keyCode !== 13 || !words.length || !words[0].length) {
 		return;
 	}
 	if (words[0] === getCurrentWord(e)) {
@@ -201,16 +207,28 @@ const onEnter = e => {
 
 	e.preventDefault();
 	e.stopImmediatePropagation();
+	const needs_closing_backtick = isInOpenBacktick(e.target);
 	let word = words[0];
-	if (is_in_block_format(e.target)) {
+	if (needs_closing_backtick) {
 		word += '`';
 	} else {
 		word = '`' + word + '`';
 	}
 	e.target.value = replaceCurrentWord(e.target, word);
+	e.target.selectionEnd = e.target.selectionEnd - 1;
 	removeTooltip();
 	words = [];
+	justAdded = true;
 }
+
+const onBackTick = e => {
+	if (justAdded && getNextCharacter(e.target) === '`') {
+		e.stopImmediatePropagation();
+		e.preventDefault();
+		e.target.selectionEnd = e.target.selectionEnd + 1;
+		e.target.selectionStart = e.target.selectionEnd;
+	}
+};
 
 var getToolTip = () => {
 	const id = 'ignacio';
@@ -291,7 +309,18 @@ const onFocus = event => {
 		trie.markSpecial(special_words);
 	}
 	log(`trie built ${time() - start}ms (${trie.size} words)`);
-	event.target.addEventListener('keydown', onEnter)
+	event.target.addEventListener('keydown', e => {
+		if (e.keyCode === 13) {
+			onEnter(e);
+			// We need to stop this here and not count
+			// it as a regular keydown
+			return;
+		}
+		if (e.keyCode === 192) {
+			onBackTick(e);
+		}
+		justAdded = false;
+	})
 	event.target.addEventListener('keyup', onKeyUp(trie))
 };
 
