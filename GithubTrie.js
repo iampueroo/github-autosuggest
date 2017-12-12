@@ -191,7 +191,22 @@ const replaceCurrentWord = (textarea, replace) => {
 }
 
 const isInOpenBacktick = (textarea) => {
-	return textarea.value.split(/`|``/g).length % 2 === 0;
+	return textarea.value.split(/`/g).length % 2 === 0;
+};
+
+const needsClosingBacktick = textarea => {
+	const string_after_cursor = textarea.value.slice(textarea.selectionStart);
+	return string_after_cursor.indexOf('`') < 0 && isInOpenBacktick(textarea);
+};
+
+const needsBothBackticks = textarea => {
+	const value = textarea.value;
+	if (value.indexOf('`') < 0) {
+		return true;
+	}
+	const index = textarea.selectionStart;
+	return value.slice(index).split(/`/g).length % 2 === 1 &&
+		value.slice(0, index).split(/`/g).length % 2 === 1;
 }
 
 let justAdded = false;
@@ -206,11 +221,10 @@ const onEnter = e => {
 
 	e.preventDefault();
 	e.stopImmediatePropagation();
-	const needs_closing_backtick = isInOpenBacktick(e.target);
 	let word = words[0];
-	if (needs_closing_backtick) {
+	if (needsClosingBacktick(e.target)) {
 		word += '`';
-	} else {
+	} else if (needsBothBackticks(e.target)) {
 		word = '`' + word + '`';
 	}
 	e.target.value = replaceCurrentWord(e.target, word);
