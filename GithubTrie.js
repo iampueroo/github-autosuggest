@@ -210,7 +210,8 @@ const needsBothBackticks = textarea => {
 }
 
 let justAdded = false;
-
+let prevState = null; // { value, index }
+let currentValue = '';
 const onEnter = e => {
 	if (e.keyCode !== 13 || !words.length || !words[0].length) {
 		return;
@@ -227,8 +228,11 @@ const onEnter = e => {
 	} else if (needsBothBackticks(e.target)) {
 		word = '`' + word + '`';
 	}
+
+	prevState = { value: e.target.value, index: e.target.selectionEnd };
 	e.target.value = replaceCurrentWord(e.target, word);
 	e.target.selectionEnd = e.target.selectionEnd - 1;
+	currentValue = e.target.value;
 	removeTooltip();
 	words = [];
 	justAdded = true;
@@ -331,6 +335,9 @@ const onFocus = event => {
 		if (e.keyCode === 192) {
 			onBackTick(e);
 		}
+		if (e.metaKey && e.keyCode == 90) {
+			onUndo(e);
+		}
 		justAdded = false;
 	})
 	event.target.addEventListener('keyup', onKeyUp(trie))
@@ -359,6 +366,22 @@ const onKeyUp = trie => event => {
 	}
 	log(`Current word: ${currentWord}. Found ${words.length} words`);
 	words.forEach(w => log(`\n${w}`));
-}
+};
+
+const onUndo = event => {
+	const textarea = event.target;
+	if (textarea.value === currentValue && prevState.value) {
+		const newPrevState = {
+			value: textarea.value,
+			index: textarea.selectionEnd,
+		};
+		textarea.value = prevState.value;
+		textarea.selectionStart = prevState.index;
+		textarea.selectionEnd = prevState.index;
+		prevState = newPrevState;
+		currentValue = textarea.value;
+		event.preventDefault();
+	}
+};
 
 document.addEventListener('focusin', onFocus);
