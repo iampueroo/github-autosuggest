@@ -282,8 +282,7 @@ const removeTooltip = () => {
 
 const getWords = (node) => {
 	const words = [];
-	const names = Array.prototype.slice.call(node.querySelectorAll('.pl-c1, .pl-smi')).map(e => e.innerHTML);
-	const trie = new Trie();
+	const names = Array.prototype.slice.call(node.querySelectorAll('.pl-c1, .pl-smi, .pl-en')).map(e => e.innerHTML);
 	for (const name of names) {
 		words.push(name);
 	}
