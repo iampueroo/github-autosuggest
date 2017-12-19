@@ -11,7 +11,7 @@
     "webpack": "^3.10.0"
   },
   "scripts": {
-    "build": "webpack webpack.config.js && minify static/bundle.min.js > static/bundle.min.js",
+    "build": "webpack webpack.config.js && minify static/bundle.min.js -o static/bundle.min.js",
     "dev": "webpack webpack.config.js --watch"
   }
 }

@@ -29,7 +29,7 @@ const getNextCharacter = textarea => {
 const replaceCurrentWord = (textarea, replace) => {
 	const startIndex = textarea.selectionStart;
 	let charIndex = 0;
-	let currentValue = tokenize(textarea.value).filter(w => w !== '');
+	let currentValue = tokenize(textarea.value);
 	for (const word of currentValue) {
 		if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
 			let splitValue = textarea.value.split('');

@@ -9,7 +9,7 @@ export function getFirstParent(el, selector) {
 }
 
 export function log(...args) {
-	if (true || window.logmeplease) {
+	if (window.logmeplease) {
 		console.log(...args);
 	}
 }
