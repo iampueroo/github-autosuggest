@@ -1,23 +1,10 @@
 import Trie from './Trie';
+import { getWords, tokenize } from './GithubHTMLParser';
 import * as Utils from './Utils';
 import getCaretCoordinates from './textarea-caret-position';
 
-// const HEIGHT = 31;
-// const CLEAN_REGEX = /\((?!\))|(?<!\()\)|\[|\]|{|}|\.|,|`|\n|;/g;
-const CLEAN_REGEX = /\((?!\))|\[|\]|{|}|\.|,|`|\n|;/g;
-const SPLIT_REGEX = /->|=>|\!/g;
-
 function time() {
 	return (new Date()).getTime();
-}
-
-function clean(s) {
-	const replaceString = '()';
-	const replaceWith = '$IGNACIO$';
-	const replaced = s.replace(replaceString, replaceWith);
-	var splitChars = ['(', ')', '[', ']', '{', '}', '.', ',', '`', '\\n'];
-	var regex = new RegExp(splitChars.map(c => `\\${c}`).join('|'));
-	return s.replace(regex, ' ').replace(replaceWith, replaceString);
 }
 
 let words = [];
@@ -27,7 +14,7 @@ const getCurrentWord = textarea => {
 	let charIndex = 0;
 	for (const word of textarea.value.split(' ')) {
 		if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
-			let currentWord = clean(word).split(' ').filter(w => w !== '');
+			let currentWord = tokenize(word).filter(w => w !== '');
 			return currentWord[currentWord.length - 1];
 		}
 		charIndex += word.length + 1; // 1 due to the space
@@ -42,7 +29,7 @@ const getNextCharacter = textarea => {
 const replaceCurrentWord = (textarea, replace) => {
 	const startIndex = textarea.selectionStart;
 	let charIndex = 0;
-	let currentValue = clean(textarea.value).split(' ');
+	let currentValue = tokenize(textarea.value);
 	for (const word of currentValue) {
 		if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
 			let splitValue = textarea.value.split('');
@@ -146,35 +133,6 @@ const removeTooltip = () => {
 	tooltip.remove();
 }
 
-const getWords = (node) => {
-	const words = [];
-	const names = Array.prototype.slice.call(node.querySelectorAll('.pl-c1, .pl-smi, .pl-en')).map(e => e.innerHTML);
-	for (const name of names) {
-		words.push(name);
-	}
-	const lines = Array.prototype.slice.call(node.querySelectorAll('.pl-s1')).forEach(e => {
-		let content = e.textContent;
-		for (let i = 0; i < e.children.length; i++) {
-			// Remove textContent from comments, as they're not helpful
-			if (e.children[i].classList.contains('pl-c')) {
-				content = content.replace(e.children[i].textContent, '');
-			}
-		}
-		const tokens = clean(content).trim().split(' ');
-		for (const token of tokens) {
-			if (token.length < 5) {
-				continue;
-			}
-			words.push(token);
-			const split_words = token.split(SPLIT_REGEX);
-			if (split_words.length > 1) {
-				split_words.forEach(w => words.push(w));
-			}
-		}
-	});
-	return words;
-};
-
 const onKeyUp = trie => event => {
 	words = [];
 	const tooltip = getToolTip();
@@ -196,8 +154,7 @@ const onKeyUp = trie => event => {
 	} else {
 		removeTooltip();
 	}
-	Utils.log(`Current word: ${currentWord}. Found ${words.length} words`);
-	words.forEach(w => Utils.log(`\n${w}`));
+	Utils.log(`Current word: ${currentWord}. Found ${words.length} words`, words);
 };
 
 const onUndo = event => {
