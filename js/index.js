@@ -1,157 +1,23 @@
-const HEIGHT = 31;
-const CLEAN_REGEX = /\([^\)]{1}|(?<!\()\)|\[|\]|{|}|\.|,|`|\n|;/g;
+import Trie from './Trie.js';
+import * as Utils from './Utils.js';
+import getCaretCoordinates from './textarea-caret-position.js';
+
+// const HEIGHT = 31;
+// const CLEAN_REGEX = /\((?!\))|(?<!\()\)|\[|\]|{|}|\.|,|`|\n|;/g;
+const CLEAN_REGEX = /\((?!\))|\[|\]|{|}|\.|,|`|\n|;/g;
 const SPLIT_REGEX = /->|=>|\!/g;
-
-function getFirstParent(el, selector) {
-	if (!el.parentElement) {
-		return false;
-	} else if (el.parentElement.matches(selector)) {
-		return el.parentElement;
-	}
-	return getFirstParent(el.parentElement, selector);
-}
-
-function log(...args) {
-	if (window.logmeplease) {
-		console.log(...args);
-	}
-}
 
 function time() {
 	return (new Date()).getTime();
 }
 
-function totalOffset(element) {
-	const offset = { top: 0, left: 0 };
-	while (element) {
-		offset.left += element.offsetLeft || 0;
-		offset.top += element.offsetTop || 0;
-		element = element.offsetParent;
-	}
-	return offset;
-}
-
 function clean(s) {
-	return s.replace(CLEAN_REGEX, ' ');
-}
-
-class Node {
-
-	constructor(char) {
-		this.char = char
-		this.lowerChar = char.toLowerCase();
-		this.children = {};
-		this.count = 1;
-		this.priority = 0; // Binary weights
-	}
-
-	setPriority(_) {
-		this.priority = _;
-	}
-
-	isWord() {
-		return this._isWord === true;
-	}
-
-	setIsWord(_) {
-		this._isWord = !!_;
-	}
-
-	upCount() {
-		this.count++;
-	}
-
-	wordNodes() {
-		const words = []; // ordered list of { node, string}
-		if (this.isWord()) {
-			words.push({
-				s: this.char, // string
-				n: this, // node
-			})
-		}
-		for (const key of Object.keys(this.children)) {
-			const childNodes = this.children[key].wordNodes();
-			for (const d of childNodes) {
-				words.push({
-					s: this.char + d.s,
-					n: d.n,
-				});
-			}
-		}
-		return words;
-	}
-}
-
-class Trie {
-
-	constructor() {
-		this.root = new Node('');
-		this.size = 0;
-	}
-
-	addWords(words) {
-		words.forEach(w => this.addWord(w));
-	}
-
-	addWord(word) {
-		let node = this.root;
-		for (const char of word) {
-			if (!node.children[char]) {
-				node.children[char] = new Node(char);
-			}
-			node = node.children[char];
-		}
-		node.setIsWord(true);
-		node.upCount();
-		this.size++;
-	}
-
-	markSpecial(words) {
-		if (typeof words === 'string') {
-			words = [words];
-		}
-		words.forEach(w => {
-			if (!this.get(w)) {
-				this.addWord(w);
-			}
-			this.get(w).setPriority(1);
-		})
-	}
-
-	contains(word) {
-		const node = this.get(word);
-		return node && node.isWord();
-	}
-
-	find(prefix) {
-		if (!prefix) {
-			return '';
-		}
-		const node = this.get(prefix);
-		const words = node ? node.wordNodes() : [];
-		prefix = prefix.substr(0, prefix.length - 1);
-		return words.sort((a,b) => b.n.priority - a.n.priority).map(w => prefix + w.s);
-	}
-
-	get(word) {
-		let node = this.root;
-		let lowerChar;
-		for (const char of word) {
-			let lowerChar = char.toLowerCase();
-			if (node.children[char]) {
-				node = node.children[char];
-			} else if (node.children[lowerChar]) {
-				node = node.children[lowerChar];
-			} else {
-				return;
-			}
-		}
-		return node;
-	}
-
-	size() {
-		return this.size;
-	}
+	const replaceString = '()';
+	const replaceWith = '$IGNACIO$';
+	const replaced = s.replace(replaceString, replaceWith);
+	var splitChars = ['(', ')', '[', ']', '{', '}', '.', ',', '`', '\\n'];
+	var regex = new RegExp(splitChars.map(c => `\\${c}`).join('|'));
+	return s.replace(regex, ' ').replace(replaceWith, replaceString);
 }
 
 let words = [];
@@ -187,7 +53,7 @@ const replaceCurrentWord = (textarea, replace) => {
 	}
 	console.error('textarea', textarea.value);
 	console.error('replace', replace);
-	throw new Error('FUCK');
+	throw new Error('oops');
 }
 
 const isInOpenBacktick = (textarea) => {
@@ -247,7 +113,7 @@ const onBackTick = e => {
 	}
 };
 
-var getToolTip = () => {
+const getToolTip = () => {
 	const id = 'ignacio';
 	let element = document.querySelector(`.${id}`);
 	if (!element) {
@@ -262,8 +128,8 @@ var getToolTip = () => {
 }
 
 const showToolTip = (word, textarea) => {
-	const textareaOffset = totalOffset(textarea);
-	const caretOffset = window.getCaretCoordinates(textarea, textarea.selectionEnd);
+	const textareaOffset = Utils.totalOffset(textarea);
+	const caretOffset = getCaretCoordinates(textarea, textarea.selectionEnd);
 	const tooltip = getToolTip();
 	tooltip.classList.add('ignacio-hidden');
 	tooltip.innerHTML = word;
@@ -309,39 +175,6 @@ const getWords = (node) => {
 	return words;
 };
 
-const onFocus = event => {
-	if (!event.target || !event.target.classList.contains('comment-form-textarea')) {
-		return;
-	}
-	const start = time();
-	log('Building trie...');
-	const trie = new Trie();
-	const words = getWords(window.document);
-	trie.addWords(words);
-	const inline_comment_div = getFirstParent(event.target, 'tr.inline-comments');
-	if (inline_comment_div && inline_comment_div.previousSibling) {
-		const special_words = getWords(inline_comment_div.previousSibling);
-		trie.markSpecial(special_words);
-	}
-	log(`trie built ${time() - start}ms (${trie.size} words)`);
-	event.target.addEventListener('keydown', e => {
-		if (e.keyCode === 13) {
-			onEnter(e);
-			// We need to stop this here and not count
-			// it as a regular keydown
-			return;
-		}
-		if (e.keyCode === 192) {
-			onBackTick(e);
-		}
-		if (e.metaKey && e.keyCode == 90) {
-			onUndo(e);
-		}
-		justAdded = false;
-	})
-	event.target.addEventListener('keyup', onKeyUp(trie))
-};
-
 const onKeyUp = trie => event => {
 	words = [];
 	const tooltip = getToolTip();
@@ -363,8 +196,8 @@ const onKeyUp = trie => event => {
 	} else {
 		removeTooltip();
 	}
-	log(`Current word: ${currentWord}. Found ${words.length} words`);
-	words.forEach(w => log(`\n${w}`));
+	Utils.log(`Current word: ${currentWord}. Found ${words.length} words`);
+	words.forEach(w => Utils.log(`\n${w}`));
 };
 
 const onUndo = event => {
@@ -383,4 +216,36 @@ const onUndo = event => {
 	}
 };
 
+const onFocus = event => {
+	if (!event.target || !event.target.classList.contains('comment-form-textarea')) {
+		return;
+	}
+	const start = time();
+	Utils.log('Building trie...');
+	const trie = new Trie();
+	const words = getWords(window.document);
+	trie.addWords(words);
+	const inline_comment_div = Utils.getFirstParent(event.target, 'tr.inline-comments');
+	if (inline_comment_div && inline_comment_div.previousSibling) {
+		const special_words = getWords(inline_comment_div.previousSibling);
+		trie.markSpecial(special_words);
+	}
+	Utils.log(`trie built ${time() - start}ms (${trie.size} words)`);
+	event.target.addEventListener('keydown', e => {
+		if (e.keyCode === 13) {
+			onEnter(e);
+			// We need to stop this here and not count
+			// it as a regular keydown
+			return;
+		}
+		if (e.keyCode === 192) {
+			onBackTick(e);
+		}
+		if (e.metaKey && e.keyCode == 90) {
+			onUndo(e);
+		}
+		justAdded = false;
+	})
+	event.target.addEventListener('keyup', onKeyUp(trie))
+};
 document.addEventListener('focusin', onFocus);

@@ -1,0 +1,17 @@
+{
+  "name": "github-autosuggest",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "git@github.com:iampueroo/github-autosuggest.git",
+  "author": "Ignacio Ampuero <ignaciorampuero@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-minify": "^0.2.0",
+    "copy-webpack-plugin": "^4.3.0",
+    "webpack": "^3.10.0"
+  },
+  "scripts": {
+    "build": "webpack webpack.config.js && minify static/bundle.min.js > static/bundle.min.js",
+    "dev": "webpack webpack.config.js --watch"
+  }
+}

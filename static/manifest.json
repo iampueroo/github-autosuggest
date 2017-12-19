@@ -1,7 +1,7 @@
 {
    "content_scripts": [ {
-      "js": ["textarea-caret-position.js", "GithubTrie.js"],
-      "css": ["GithubTrie.css"],
+      "js": ["bundle.min.js"],
+      "css": ["style.css"],
       "matches": [ "https://github.com/*"]
    } ],
    "description": "Autosuggest for Github commit comments",
