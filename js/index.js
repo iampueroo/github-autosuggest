@@ -1,6 +1,6 @@
-import Trie from './Trie.js';
-import * as Utils from './Utils.js';
-import getCaretCoordinates from './textarea-caret-position.js';
+import Trie from './Trie';
+import * as Utils from './Utils';
+import getCaretCoordinates from './textarea-caret-position';
 
 // const HEIGHT = 31;
 // const CLEAN_REGEX = /\((?!\))|(?<!\()\)|\[|\]|{|}|\.|,|`|\n|;/g;
@@ -22,7 +22,7 @@ function clean(s) {
 
 let words = [];
 
-const getCurrentWord = (textarea) => {
+const getCurrentWord = textarea => {
 	const startIndex = textarea.selectionStart;
 	let charIndex = 0;
 	for (const word of textarea.value.split(' ')) {
@@ -56,7 +56,7 @@ const replaceCurrentWord = (textarea, replace) => {
 	throw new Error('oops');
 }
 
-const isInOpenBacktick = (textarea) => {
+const isInOpenBacktick = textarea => {
 	return textarea.value.split(/`/g).length % 2 === 0;
 };
 
@@ -221,7 +221,6 @@ const onFocus = event => {
 		return;
 	}
 	const start = time();
-	Utils.log('Building trie...');
 	const trie = new Trie();
 	const words = getWords(window.document);
 	trie.addWords(words);
@@ -230,7 +229,7 @@ const onFocus = event => {
 		const special_words = getWords(inline_comment_div.previousSibling);
 		trie.markSpecial(special_words);
 	}
-	Utils.log(`trie built ${time() - start}ms (${trie.size} words)`);
+	Utils.log(`Trie built ${time() - start}ms (${trie.size} words)`);
 	event.target.addEventListener('keydown', e => {
 		if (e.keyCode === 13) {
 			onEnter(e);
@@ -240,12 +239,12 @@ const onFocus = event => {
 		}
 		if (e.keyCode === 192) {
 			onBackTick(e);
-		}
-		if (e.metaKey && e.keyCode == 90) {
+		} else if (e.keyCode == 90 && e.metaKey) {
 			onUndo(e);
 		}
 		justAdded = false;
 	})
 	event.target.addEventListener('keyup', onKeyUp(trie))
 };
+
 document.addEventListener('focusin', onFocus);

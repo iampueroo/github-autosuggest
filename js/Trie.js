@@ -1,9 +1,9 @@
-import Node from './Node.js';
+import TrieNode from './TrieNode.js';
 
 export default class Trie {
 
 	constructor() {
-		this.root = new Node('');
+		this.root = new TrieNode('');
 		this.size = 0;
 	}
 
@@ -15,7 +15,7 @@ export default class Trie {
 		let node = this.root;
 		for (const char of word) {
 			if (!node.children[char]) {
-				node.children[char] = new Node(char);
+				node.children[char] = new TrieNode(char);
 			}
 			node = node.children[char];
 		}

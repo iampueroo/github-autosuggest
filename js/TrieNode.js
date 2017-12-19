@@ -1,4 +1,4 @@
-export default class Node {
+export default class TrieNode {
 
 	constructor(char) {
 		this.char = char
