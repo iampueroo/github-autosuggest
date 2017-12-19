@@ -29,7 +29,7 @@ const getNextCharacter = textarea => {
 const replaceCurrentWord = (textarea, replace) => {
 	const startIndex = textarea.selectionStart;
 	let charIndex = 0;
-	let currentValue = tokenize(textarea.value);
+	let currentValue = tokenize(textarea.value).filter(w => w !== '');
 	for (const word of currentValue) {
 		if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
 			let splitValue = textarea.value.split('');
@@ -154,7 +154,7 @@ const onKeyUp = trie => event => {
 	} else {
 		removeTooltip();
 	}
-	Utils.log(`Current word: ${currentWord}. Found ${words.length} words`, words);
+	Utils.log(`Current word: ${currentWord} Found ${words.length} words`, words);
 };
 
 const onUndo = event => {

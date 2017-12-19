@@ -10,7 +10,7 @@ export function tokenize(s) {
 	const replaceWith = '$IGNACIO$';
 	const replaced = s.replace(replaceString, replaceWith);
 	const regex = new RegExp(TOKENIZE_CHARACTERS.map(c => `\\${c}`).join('|'), 'g');
-	return s.replace(regex, ' ').replace(replaceWith, replaceString).trim().split(' ');
+	return s.replace(regex, ' ').replace(replaceWith, replaceString).split(' ');
 }
 
 export function getWords(node) {
