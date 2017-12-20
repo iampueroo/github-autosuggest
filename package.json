@@ -7,7 +7,6 @@
   "license": "MIT",
   "devDependencies": {
     "babel-minify": "^0.2.0",
-    "copy-webpack-plugin": "^4.3.0",
     "prettier": "1.9.2",
     "webpack": "^3.10.0"
   },
