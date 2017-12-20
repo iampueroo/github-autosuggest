@@ -142,10 +142,15 @@ const onUndo = event => {
 };
 
 const onFocus = event => {
+  const textarea = event.target;
   if (!Utils.isCommentTextArea(event.target)) {
     return;
   }
-  const textarea = event.target;
+  if (textarea.__github_autosugges_trie) {
+    // We already have processed this
+    return;
+  }
+
   const start = Utils.time();
   const trie = new Trie();
   const words = getWords(window.document);
@@ -175,8 +180,8 @@ const onFocus = event => {
     }
     justAdded = false;
   });
-
   textarea.addEventListener('keyup', event => onKeyUp(event.target, trie));
+  textarea.__github_autosugges_trie = true;
 };
 
 const onFocusOut = event => {
