@@ -44,15 +44,16 @@ export function getWords(node) {
         content = content.replace(e.children[i].textContent, '');
       }
     }
-    const tokens = tokenize(content);
+    const tokens = tokenize(content).map(t => t.trim());
     for (const token of tokens) {
       if (token.length < MIN_LENGTH_OF_TOKEN) {
         continue;
       }
       words.push(token);
+
       const split_words = token.split(SPLIT_REGEX);
       if (split_words.length > 1) {
-        split_words.forEach(w => words.push(w));
+        split_words.forEach(w => words.push(w.trim()));
       }
     }
   });

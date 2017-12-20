@@ -1,13 +1,8 @@
 import Trie from './Trie';
-import { getWords, tokenize } from './GithubHTMLParser';
-import * as Utils from './Utils';
 import getCaretCoordinates from './textarea-caret-position';
-
-function time() {
-  return new Date().getTime();
-}
-
-let words = [];
+import * as Tooltip from './Tooltip';
+import * as Utils from './Utils';
+import { getWords, tokenize } from './GithubHTMLParser';
 
 const getCurrentWord = textarea => {
   const startIndex = textarea.selectionStart;
@@ -20,10 +15,6 @@ const getCurrentWord = textarea => {
     charIndex += word.length + 1; // 1 due to the space
   }
   throw new Error('shit');
-};
-
-const getNextCharacter = textarea => {
-  return textarea.value[textarea.selectionStart];
 };
 
 const replaceCurrentWord = (textarea, replace) => {
@@ -64,103 +55,73 @@ const needsBothBackticks = textarea => {
   );
 };
 
+let suggestedWord = '';
 let justAdded = false;
 let prevState = null; // { value, index }
 let currentValue = '';
-const onEnter = e => {
-  if (e.keyCode !== 13 || !words.length || !words[0].length) {
-    return;
-  }
-  if (words[0] === getCurrentWord(e.target)) {
-    return;
-  }
 
-  e.preventDefault();
-  e.stopImmediatePropagation();
-  let word = words[0];
-  if (needsClosingBacktick(e.target)) {
+const onEnter = (event, trie) => {
+  if (event.keyCode !== 13 || !suggestedWord) {
+    return;
+  }
+  const textarea = event.target;
+  if (suggestedWord === getCurrentWord(textarea)) {
+    return;
+  }
+  // We're taking over the event.
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  let word = suggestedWord;
+  if (needsClosingBacktick(textarea)) {
     word += '`';
-  } else if (needsBothBackticks(e.target)) {
+  } else if (needsBothBackticks(textarea)) {
     word = '`' + word + '`';
   }
-
-  prevState = { value: e.target.value, index: e.target.selectionEnd };
-  e.target.value = replaceCurrentWord(e.target, word);
-  e.target.selectionEnd = e.target.selectionEnd - 1;
-  currentValue = e.target.value;
-  removeTooltip();
-  words = [];
+  prevState = { value: textarea.value, index: textarea.selectionEnd };
+  textarea.value = replaceCurrentWord(textarea, word);
+  textarea.selectionEnd = textarea.selectionEnd - 1;
+  currentValue = event.target.value;
+  Tooltip.hide();
+  suggestedWord = '';
   justAdded = true;
+  suggest(textarea, trie);
 };
 
-const onBackTick = e => {
-  if (justAdded && getNextCharacter(e.target) === '`') {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    e.target.selectionEnd = e.target.selectionEnd + 1;
-    e.target.selectionStart = e.target.selectionEnd;
+const onBackTick = event => {
+  if (justAdded && Utils.getNextCharacter(event.target) === '`') {
+    // We're taking over the event
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.target.selectionEnd = event.target.selectionEnd + 1;
+    event.target.selectionStart = event.target.selectionEnd;
   }
 };
 
-const getToolTip = () => {
-  const id = 'ignacio';
-  let element = document.querySelector(`.${id}`);
-  if (!element) {
-    const div = document.createElement('div');
-    div.classList.add(id);
-    div.style.position = 'absolute';
-    div.innerHTML = '{word}';
-    document.body.appendChild(div);
-    element = div;
-  }
-  return element;
-};
-
-const showToolTip = (word, textarea) => {
-  const textareaOffset = Utils.totalOffset(textarea);
-  const caretOffset = getCaretCoordinates(textarea, textarea.selectionEnd);
-  const tooltip = getToolTip();
-  tooltip.classList.add('ignacio-hidden');
-  tooltip.innerHTML = word;
-  const widthOffset = -1 * tooltip.getBoundingClientRect().width / 2;
-  tooltip.style.left =
-    textareaOffset.left + caretOffset.left + widthOffset + 'px';
-  tooltip.style.top = textareaOffset.top + caretOffset.top - 31 + 'px';
-  tooltip.classList.remove('ignacio-hidden');
-};
-
-const removeTooltip = () => {
-  const tooltip = getToolTip();
-  tooltip.innerHTML = '';
-  tooltip.classList.add('ignacio-hidden');
-  tooltip.remove();
-};
-
-const onKeyUp = trie => event => {
-  words = [];
-  const tooltip = getToolTip();
-  if (
-    !event.target ||
-    !event.target.classList.contains('comment-form-textarea')
-  ) {
-    removeTooltip();
-    return;
-  }
-
-  const currentWord = getCurrentWord(event.target);
+const suggest = (textarea, trie) => {
+  const currentWord = getCurrentWord(textarea);
 
   if (!currentWord) {
-    removeTooltip();
+    Tooltip.hide();
     return;
   }
 
-  words = trie.find(currentWord);
+  const words = trie.find(currentWord);
   if (words.length && words[0] !== currentWord) {
-    showToolTip(words[0], event.target);
+    suggestedWord = words[0];
+    Tooltip.render(suggestedWord, textarea);
   } else {
-    removeTooltip();
+    Tooltip.hide();
   }
   Utils.log(`Current word: ${currentWord} Found ${words.length} words`, words);
+};
+
+const onKeyUp = (textarea, trie) => {
+  suggestedWord = '';
+  if (!textarea || !textarea.classList.contains('comment-form-textarea')) {
+    Tooltip.remove();
+    return;
+  }
+  suggest(textarea, trie);
 };
 
 const onUndo = event => {
@@ -176,32 +137,33 @@ const onUndo = event => {
     prevState = newPrevState;
     currentValue = textarea.value;
     event.preventDefault();
+    event.stopImmediatePropagation();
   }
 };
 
 const onFocus = event => {
-  if (
-    !event.target ||
-    !event.target.classList.contains('comment-form-textarea')
-  ) {
+  if (!Utils.isCommentTextArea(event.target)) {
     return;
   }
-  const start = time();
+  const textarea = event.target;
+  const start = Utils.time();
   const trie = new Trie();
   const words = getWords(window.document);
   trie.addWords(words);
   const inline_comment_div = Utils.getFirstParent(
-    event.target,
+    textarea,
     'tr.inline-comments'
   );
   if (inline_comment_div && inline_comment_div.previousSibling) {
     const special_words = getWords(inline_comment_div.previousSibling);
     trie.markSpecial(special_words);
   }
-  Utils.log(`Trie built ${time() - start}ms (${trie.size} words)`);
-  event.target.addEventListener('keydown', e => {
+
+  Utils.log(`Trie built ${Utils.time() - start}ms (${trie.size} words)`);
+
+  textarea.addEventListener('keydown', e => {
     if (e.keyCode === 13) {
-      onEnter(e);
+      onEnter(e, trie);
       // We need to stop this here and not count
       // it as a regular keydown
       return;
@@ -213,7 +175,16 @@ const onFocus = event => {
     }
     justAdded = false;
   });
-  event.target.addEventListener('keyup', onKeyUp(trie));
+
+  textarea.addEventListener('keyup', event => onKeyUp(event.target, trie));
+};
+
+const onFocusOut = event => {
+  if (!Utils.isCommentTextArea(event.target)) {
+    return;
+  }
+  Tooltip.hide();
 };
 
 document.addEventListener('focusin', onFocus);
+document.addEventListener('focusout', onFocusOut);
