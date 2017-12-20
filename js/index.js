@@ -105,8 +105,11 @@ const suggest = (textarea, trie) => {
     return;
   }
 
-  const words = trie.find(currentWord);
-  if (words.length && words[0] !== currentWord) {
+  let words = trie.find(currentWord);
+  if (words.length && words[0] === currentWord) {
+    words = words.slice(1);
+  }
+  if (words.length) {
     suggestedWord = words[0];
     Tooltip.render(suggestedWord, textarea);
   } else {
