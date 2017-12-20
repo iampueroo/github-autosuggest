@@ -42,7 +42,7 @@ export default class Trie {
 
   find(prefix) {
     if (!prefix) {
-      return '';
+      return [];
     }
     const node = this.get(prefix);
     const words = node ? node.wordNodes() : [];
