@@ -7,7 +7,7 @@ import { getWords, tokenize } from './GithubHTMLParser';
 const getCurrentWord = textarea => {
   const startIndex = textarea.selectionStart;
   let charIndex = 0;
-  for (const word of textarea.value.split(' ')) {
+  for (const word of textarea.value.split(/\s/)) {
     if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
       let currentWord = tokenize(word).filter(w => w !== '');
       return currentWord[currentWord.length - 1];
