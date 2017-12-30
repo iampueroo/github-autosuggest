@@ -31,14 +31,14 @@ const getSpan = () => {
     span = get().querySelector(`.${CLASSNAME_LABEL}`);
   }
   return span;
-}
+};
 
 const getArrow = () => {
   if (!arrow) {
     arrow = get().querySelector(`.${CLASSNAME_ARROW}`);
   }
   return arrow;
-}
+};
 
 export const hide = () => {
   get().classList.add(HIDDEN_CLASSNAME);

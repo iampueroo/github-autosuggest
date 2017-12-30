@@ -116,7 +116,10 @@
     div.appendChild(span);
 
     var coordinates = {
-      top: span.offsetTop + parseInt(computed['borderTopWidth']) - element.scrollTop,
+      top:
+        span.offsetTop +
+        parseInt(computed['borderTopWidth']) -
+        element.scrollTop,
       left: span.offsetLeft + parseInt(computed['borderLeftWidth']),
       height: parseInt(computed['lineHeight']),
     };

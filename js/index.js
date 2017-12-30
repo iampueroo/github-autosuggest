@@ -2,7 +2,7 @@ import Trie from './Trie';
 import getCaretCoordinates from './textarea-caret-position';
 import * as Tooltip from './Tooltip';
 import * as Utils from './Utils';
-import { getWords, tokenize } from './GithubHTMLParser';
+import { getWords, tokenize, getBlobWords } from './GithubHTMLParser';
 
 const getCurrentWord = textarea => {
   const startIndex = textarea.selectionStart;
@@ -153,11 +153,9 @@ const onFocus = event => {
     // We already have processed this
     return;
   }
-
   const start = Utils.time();
   const trie = new Trie();
-  const words = getWords(window.document);
-  trie.addWords(words);
+  trie.addWords(getWords(window.document));
   const inline_comment_div = Utils.getFirstParent(
     textarea,
     'tr.inline-comments'
