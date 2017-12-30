@@ -33,7 +33,6 @@ const getSpan = () => {
   return span;
 }
 
-
 const getArrow = () => {
   if (!arrow) {
     arrow = get().querySelector(`.${CLASSNAME_ARROW}`);
