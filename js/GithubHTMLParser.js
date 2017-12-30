@@ -10,7 +10,7 @@ const TOKENIZE_CHARACTERS = [
   '.',
   ',',
   '`',
-  '\\n',
+  '\n',
 ];
 const SPLIT_REGEX = /::|->|=>|\!/g;
 
