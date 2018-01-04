@@ -160,8 +160,8 @@ const onFocus = event => {
     textarea,
     'tr.inline-comments'
   );
-  if (inline_comment_div && inline_comment_div.previousSibling) {
-    const special_words = getWords(inline_comment_div.previousSibling);
+  if (inline_comment_div && inline_comment_div.previousElementSibling) {
+    const special_words = getWords(inline_comment_div.previousElementSibling);
     trie.markSpecial(special_words);
   }
 
