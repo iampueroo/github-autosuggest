@@ -13,6 +13,7 @@
   "scripts": {
     "build": "webpack webpack.config.js && minify static/bundle.min.js -o static/bundle.min.js",
     "dev": "webpack webpack.config.js --watch",
-    "prettify": "prettier --single-quote --trailing-comma es5 ./js/*.js --write"
+    "prettify": "prettier --single-quote --trailing-comma es5 ./js/*.js --write",
+    "zip": "zip dist.zip static/*"
   }
 }
