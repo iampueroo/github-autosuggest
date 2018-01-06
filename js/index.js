@@ -79,7 +79,8 @@ const onEnter = (event, trie) => {
   }
   prevState = { value: textarea.value, index: textarea.selectionEnd };
   textarea.value = replaceCurrentWord(textarea, word);
-  textarea.selectionEnd = textarea.selectionEnd - 1;
+  textarea.selectionEnd =
+    prevState.index + (textarea.value.length - prevState.value.length) - 1;
   currentValue = event.target.value;
   Tooltip.hide();
   suggestedWord = '';
