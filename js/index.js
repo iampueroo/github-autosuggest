@@ -61,7 +61,7 @@ let prevState = null; // { value, index }
 let currentValue = '';
 
 const onEnter = (event, trie) => {
-  if (event.keyCode !== 13 || !suggestedWord) {
+  if (!suggestedWord) {
     return;
   }
   const textarea = event.target;
@@ -169,7 +169,7 @@ const onFocus = event => {
   Utils.log(`Trie built ${Utils.time() - start}ms (${trie.size} words)`);
 
   textarea.addEventListener('keydown', e => {
-    if (e.keyCode === 13) {
+    if (e.keyCode === 13 || e.keyCode === 9) { // enter or tab
       onEnter(e, trie);
       // We need to stop this here and not count
       // it as a regular keydown
