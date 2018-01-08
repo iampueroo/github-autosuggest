@@ -82,7 +82,7 @@ const onEnter = (event, trie) => {
   textarea.selectionEnd =
     prevState.index + (textarea.value.length - prevState.value.length) - 1;
   currentValue = event.target.value;
-  Tooltip.hide();
+  Tooltip.remove();
   suggestedWord = '';
   justAdded = true;
   suggest(textarea, trie);
@@ -102,7 +102,7 @@ const suggest = (textarea, trie) => {
   const currentWord = getCurrentWord(textarea);
 
   if (!currentWord) {
-    Tooltip.hide();
+    Tooltip.remove();
     return;
   }
 
@@ -114,7 +114,7 @@ const suggest = (textarea, trie) => {
     suggestedWord = words[0];
     Tooltip.render(suggestedWord, textarea);
   } else {
-    Tooltip.hide();
+    Tooltip.remove();
   }
   Utils.log(`Current word: ${currentWord} Found ${words.length} words`, words);
 };
@@ -183,7 +183,7 @@ const onFocus = event => {
     justAdded = false;
   });
   textarea.addEventListener('keyup', event => onKeyUp(event.target, trie));
-  textarea.addEventListener('scroll', Tooltip.hide);
+  textarea.addEventListener('scroll', Tooltip.remove);
   textarea.__github_autosugges_trie = true;
 };
 
@@ -191,7 +191,7 @@ const onFocusOut = event => {
   if (!Utils.isCommentTextArea(event.target)) {
     return;
   }
-  Tooltip.hide();
+  Tooltip.remove();
 };
 
 document.addEventListener('focusin', onFocus);
