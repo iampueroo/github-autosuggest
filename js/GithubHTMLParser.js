@@ -1,5 +1,5 @@
 const MIN_LENGTH_OF_TOKEN = 5; //
-const BEST = ['pl-smi', 'pl-c1', 'pl-k', 'pl-en', 'pl-e'];
+const BEST = ['pl-smi', 'pl-c1', 'pl-k', 'pl-en', 'pl-e', 'pl-v'];
 const TOKENIZE_CHARACTERS = [
   '(',
   ')',
