@@ -72,15 +72,18 @@ const onEnter = (event, trie) => {
   event.preventDefault();
   event.stopImmediatePropagation();
   let word = suggestedWord;
+  let closedOffset = 0; // for new index
   if (needsClosingBacktick(textarea)) {
     word += '`';
+    closedOffset = 1;
   } else if (needsBothBackticks(textarea)) {
     word = '`' + word + '`';
+    closedOffset = 1;
   }
   prevState = { value: textarea.value, index: textarea.selectionEnd };
   textarea.value = replaceCurrentWord(textarea, word);
   textarea.selectionEnd =
-    prevState.index + (textarea.value.length - prevState.value.length) - 1;
+    prevState.index + (textarea.value.length - prevState.value.length) - closedOffset;
   currentValue = event.target.value;
   Tooltip.remove();
   suggestedWord = '';
