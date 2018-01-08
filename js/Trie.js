@@ -45,11 +45,11 @@ export default class Trie {
       return [];
     }
     const node = this.get(prefix, { case_insensitive: true });
-    const word = node.real_word.slice(0, -1);
     const words = node ? node.wordNodes() : [];
+    const real_prefix = node ? node.real_word.slice(0, -1): '';
     return words
       .sort((a, b) => b.n.priority - a.n.priority)
-      .map(w => word + w.s);
+      .map(w => real_prefix + w.s);
   }
 
   get(word, {case_insensitive} = {case_insensitive: false}) {
