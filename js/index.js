@@ -186,6 +186,7 @@ const onFocus = event => {
     justAdded = false;
   });
   textarea.addEventListener('keyup', event => onKeyUp(event.target, trie));
+  textarea.addEventListener('click', event => onKeyUp(event.target, trie));
   textarea.addEventListener('scroll', Tooltip.remove);
   textarea.__github_autosugges_trie = true;
 };
