@@ -44,26 +44,40 @@ export default class Trie {
     if (!prefix) {
       return [];
     }
-    const node = this.get(prefix);
+    const node = this.get(prefix, { case_insensitive: true });
+    const word = node.real_word.slice(0, -1);
     const words = node ? node.wordNodes() : [];
-    prefix = prefix.substr(0, prefix.length - 1);
     return words
       .sort((a, b) => b.n.priority - a.n.priority)
-      .map(w => prefix + w.s);
+      .map(w => word + w.s);
   }
 
-  get(word) {
+  get(word, {case_insensitive} = {case_insensitive: false}) {
     let node = this.root;
-    let lowerChar;
+    let real_word = '';
     for (const char of word) {
-      let lowerChar = char.toLowerCase();
       if (node.children[char]) {
         node = node.children[char];
-      } else if (node.children[lowerChar]) {
-        node = node.children[lowerChar];
+        real_word += char;
+      } else if (case_insensitive) {
+        const upper = char.toUpperCase();
+        const lower = char.toLowerCase();
+        if (node.children[lower]) {
+          node = node.children[lower];
+          real_word += lower;
+        } else if (node.children[upper]) {
+          node = node.children[upper];
+          real_word += upper
+        } else {
+          return;
+        }
       } else {
         return;
       }
+    }
+    if (case_insensitive) {
+      // Not pretty but I need this.
+      node.real_word = real_word;
     }
     return node;
   }
