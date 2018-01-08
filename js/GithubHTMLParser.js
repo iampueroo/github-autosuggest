@@ -25,7 +25,7 @@ export function tokenize(s) {
     TOKENIZE_CHARACTERS.map(c => `\\${c}`).join('|'),
     'g'
   );
-  return s
+  return replaced
     .replace(regex, ' ')
     .replace(replaceWith, replaceString)
     .split(' ');
