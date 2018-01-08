@@ -3,10 +3,9 @@ import { tokenize } from './GithubHTMLParser';
 export const getCurrentWord = textarea => {
   const startIndex = textarea.selectionStart;
   let charIndex = 0;
-  for (const word of textarea.value.split(/\s/)) {
+  for (const word of tokenize(textarea.value)) {
     if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
-      let currentWord = tokenize(word).filter(w => w !== '');
-      return currentWord[currentWord.length - 1];
+      return word;
     }
     charIndex += word.length + 1; // 1 due to the space
   }
