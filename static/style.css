@@ -4,6 +4,7 @@
 	padding: 5px;
 	height: 31px;
 	position: absolute;
+	z-index: 500; // needs to be at least above 100
 }
 
 .ignacio-hidden {
