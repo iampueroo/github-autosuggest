@@ -54,7 +54,7 @@ const onBackTick = event => {
 const suggest = (textarea, trie) => {
   const currentWord = Textarea.getCurrentWord(textarea);
 
-  if (!currentWord || /^#|^@/.test(currentWord)) {
+  if (!currentWord || /^:|^#|^@/.test(currentWord)) {
     Tooltip.remove();
     return;
   }
