@@ -9,6 +9,7 @@ const CLASSNAME_LABEL = `${CLASSNAME}-label`;
 const HIDDEN_CLASSNAME = 'ignacio-hidden';
 let el;
 let span;
+let clickHandler;
 
 const get = () => {
   if (!el) {
@@ -19,6 +20,9 @@ const get = () => {
     container.appendChild(text_span);
     document.body.appendChild(container);
     el = container;
+    el.addEventListener('mousedown', function(...args) {
+      if (clickHandler) clickHandler(...args);
+    });
   }
   return el;
 };
@@ -54,6 +58,10 @@ export const render = (word, textarea) => {
   tooltip.style.left = `${Math.max(left, 0)}px`;
   tooltip.style.top = `${textareaOffset.top + caretOffset.top - 31}px`;
   unhide();
+};
+
+export const onClick = handler => {
+  clickHandler = handler;
 };
 
 export const remove = () => {

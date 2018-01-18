@@ -10,11 +10,10 @@ let justAdded = false;
 let prevState = null; // { value, index }
 let currentValue = '';
 
-const onEnter = (event, trie) => {
+const onEnter = (event, textarea, trie) => {
   if (!suggestedWord) {
     return;
   }
-  const textarea = event.target;
   if (suggestedWord === Textarea.getCurrentWord(textarea)) {
     return;
   }
@@ -123,7 +122,7 @@ const onFocus = event => {
 
   textarea.addEventListener('keydown', e => {
     if (e.keyCode === 13 || e.keyCode === 9) { // enter or tab
-      onEnter(e, trie);
+      onEnter(e, e.target, trie);
       // We need to stop this here and not count
       // it as a regular keydown
       return;
@@ -138,6 +137,7 @@ const onFocus = event => {
   textarea.addEventListener('keyup', event => onKeyUp(event.target, trie));
   textarea.addEventListener('click', event => onKeyUp(event.target, trie));
   textarea.addEventListener('scroll', Tooltip.remove);
+  Tooltip.onClick(event => onEnter(event, textarea, trie));
   textarea.__github_autosugges_trie = true;
 };
 
