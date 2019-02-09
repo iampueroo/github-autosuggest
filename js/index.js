@@ -15,6 +15,17 @@ let currentValue = '';
 
 Utils.log('Executing');
 
+/**
+ * On "enter" handler for the focus'd textarea div. If there is currently
+ * a suggested word, will inject the word to where the cursor is in the
+ * textarea and then call suggest() to trigger another suggestion of a
+ * longer word that starts with the injected word.
+ *
+ * @param  {Event} event
+ * @param  {HTMLElement} textarea
+ * @param  {Trie} trie
+ * @return {null}
+ */
 const onEnter = (event, textarea, trie) => {
   if (!suggestedWord) {
     return;
@@ -25,6 +36,7 @@ const onEnter = (event, textarea, trie) => {
   // We're taking over the event.
   event.preventDefault();
   event.stopImmediatePropagation();
+
   let word = suggestedWord;
   let closedOffset = 0; // for new index
   if (Textarea.needsClosingBacktick(textarea)) {
@@ -47,6 +59,13 @@ const onEnter = (event, textarea, trie) => {
   suggest(textarea, trie);
 };
 
+/**
+ * Since we inject backticks after the cursor at times, we need to
+ * do "ignore" the immeidately following "`" keydown.
+ *
+ * @param  {Event} event
+ * @return {null}
+ */
 const onBackTick = event => {
   if (justAdded && Utils.getNextCharacter(event.target) === '`') {
     // We're taking over the event
