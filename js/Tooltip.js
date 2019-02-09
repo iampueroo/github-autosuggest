@@ -1,8 +1,7 @@
 import getCaretCoordinates from './textarea-caret-position';
 import { totalOffset } from './Utils';
-import { tokenize } from './GithubHTMLParser';
+import { tokenize } from './HTMLParser';
 import { getCurrentWord } from './Textarea';
-
 
 const CLASSNAME = 'ignacio';
 const CLASSNAME_LABEL = `${CLASSNAME}-label`;
@@ -48,7 +47,10 @@ const getIndexOfStartOfWord = textarea => {
 
 export const render = (word, textarea) => {
   const textareaOffset = totalOffset(textarea);
-  const caretOffset = getCaretCoordinates(textarea, getIndexOfStartOfWord(textarea));
+  const caretOffset = getCaretCoordinates(
+    textarea,
+    getIndexOfStartOfWord(textarea)
+  );
   const tooltip = get();
   hide();
   getSpan().innerText = word;

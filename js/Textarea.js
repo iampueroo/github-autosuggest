@@ -1,4 +1,4 @@
-import { tokenize } from './GithubHTMLParser';
+import { tokenize } from './HTMLParser';
 
 export const getCurrentWord = textarea => {
   const startIndex = textarea.selectionStart;

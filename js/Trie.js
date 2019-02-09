@@ -46,13 +46,13 @@ export default class Trie {
     }
     const node = this.get(prefix, { case_insensitive: true });
     const words = node ? node.wordNodes() : [];
-    const real_prefix = node ? node.real_word.slice(0, -1): '';
+    const real_prefix = node ? node.real_word.slice(0, -1) : '';
     return words
       .sort((a, b) => b.n.priority - a.n.priority)
       .map(w => real_prefix + w.s);
   }
 
-  get(word, {case_insensitive} = {case_insensitive: false}) {
+  get(word, { case_insensitive } = { case_insensitive: false }) {
     let node = this.root;
     let real_word = '';
     for (const char of word) {
@@ -67,7 +67,7 @@ export default class Trie {
           real_word += lower;
         } else if (node.children[upper]) {
           node = node.children[upper];
-          real_word += upper
+          real_word += upper;
         } else {
           return;
         }

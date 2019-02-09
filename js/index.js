@@ -3,12 +3,17 @@ import getCaretCoordinates from './textarea-caret-position';
 import * as Tooltip from './Tooltip';
 import * as Utils from './Utils';
 import * as Textarea from './Textarea';
-import { getWords, tokenize, getBlobWords } from './GithubHTMLParser';
+import { getWords, tokenize, getBlobWords } from './HTMLParser';
+import getConfiguration from './getConfiguration';
+
+const PageConfiguration = getConfiguration(window.location.host);
 
 let suggestedWord = '';
 let justAdded = false;
 let prevState = null; // { value, index }
 let currentValue = '';
+
+Utils.log('Executing');
 
 const onEnter = (event, textarea, trie) => {
   if (!suggestedWord) {
@@ -32,7 +37,9 @@ const onEnter = (event, textarea, trie) => {
   prevState = { value: textarea.value, index: textarea.selectionEnd };
   textarea.value = Textarea.replaceCurrentWord(textarea, word);
   textarea.selectionEnd =
-    prevState.index + (textarea.value.length - prevState.value.length) - closedOffset;
+    prevState.index +
+    (textarea.value.length - prevState.value.length) -
+    closedOffset;
   currentValue = event.target.value;
   Tooltip.remove();
   suggestedWord = '';
@@ -73,7 +80,7 @@ const suggest = (textarea, trie) => {
 
 const onKeyUp = (textarea, trie) => {
   suggestedWord = '';
-  if (!textarea || !textarea.classList.contains('comment-form-textarea')) {
+  if (!PageConfiguration.isCommentTextArea(textarea)) {
     Tooltip.remove();
     return;
   }
@@ -99,7 +106,7 @@ const onUndo = event => {
 
 const onFocus = event => {
   const textarea = event.target;
-  if (!Utils.isCommentTextArea(event.target)) {
+  if (!PageConfiguration.isCommentTextArea(event.target)) {
     return;
   }
   if (textarea.__github_autosugges_trie) {
@@ -108,20 +115,19 @@ const onFocus = event => {
   }
   const start = Utils.time();
   const trie = new Trie();
-  trie.addWords(getWords(window.document));
-  const inline_comment_div = Utils.getFirstParent(
-    textarea,
-    'tr.inline-comments'
-  );
-  if (inline_comment_div && inline_comment_div.previousElementSibling) {
-    const special_words = getWords(inline_comment_div.previousElementSibling);
+  trie.addWords(getWords(window.document, PageConfiguration));
+  const commented_line = PageConfiguration.getCommentLine(textarea);
+  if (commented_line) {
+    const special_words = getWords(commented_line, PageConfiguration);
+    Utils.log(`Found ${special_words.length} tokens from commented line`);
     trie.markSpecial(special_words);
   }
 
   Utils.log(`Trie built ${Utils.time() - start}ms (${trie.size} words)`);
 
   textarea.addEventListener('keydown', e => {
-    if (e.keyCode === 13 || e.keyCode === 9) { // enter or tab
+    if (e.keyCode === 13 || e.keyCode === 9) {
+      // enter or tab
       onEnter(e, e.target, trie);
       // We need to stop this here and not count
       // it as a regular keydown
@@ -142,7 +148,7 @@ const onFocus = event => {
 };
 
 const onFocusOut = event => {
-  if (!Utils.isCommentTextArea(event.target)) {
+  if (!PageConfiguration.isCommentTextArea(event.target)) {
     return;
   }
   Tooltip.remove();

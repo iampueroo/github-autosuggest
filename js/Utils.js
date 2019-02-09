@@ -31,10 +31,6 @@ export function clean(s) {
   return s.replace(CLEAN_REGEX, ' ');
 }
 
-export function isCommentTextArea(el) {
-  return el && el.classList.contains('comment-form-textarea');
-}
-
 export function getNextCharacter(textarea) {
   return textarea.value[textarea.selectionStart];
 }
