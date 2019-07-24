@@ -22,7 +22,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 1. If you want to make changes, might as well just fork the repo, and clone your copy (see [here](https://help.github.com/articles/fork-a-repo/) if you're confused).
 2. `cd github-autosuggest` (or whatever you named the directory)
-2. `yarn install`. After this, congrats you have installed everything! Two more steps are needed to begin developing.
+2. `yarn install`. ([See here](https://yarnpkg.com/lang/en/docs/install/#mac-stable) if you don't have yarn). After this, congrats you have installed everything! Two more steps are needed to begin developing.
 3. `yarn dev` (basically runs `webpack --watch`). Leave this running as it will automatically write your changes to the `/static` directory.
 4. After leaving `yarn dev` running, follow the [**Installing the extension from the source**](https://github.com/iampueroo/github-autosuggest#installing-the-extension-from-the-source) instructions above. After completing the step you have successfully installed the local copy of the extension in Chrome.
 5. Make your changes! While `yarn dev` automatically bundles your changes, **it does not update the changes to chrome**. You unfortunately need to do this manually. Either a) Refresh the `chrome://extensions` page or b) use [this lovely little extension](https://chrome.google.com/webstore/detail/extensions-reloader/fimgfedafeadlieiabdeeaodndnlbhid)
