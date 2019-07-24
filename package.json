@@ -6,7 +6,9 @@
   "author": "Ignacio Ampuero <ignaciorampuero@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.5.0",
     "babel-minify": "^0.2.0",
+    "jest": "^24.8.0",
     "prettier": "1.9.2",
     "webpack": "^3.10.0"
   },
@@ -14,6 +16,14 @@
     "build": "webpack webpack.config.js && minify static/bundle.min.js -o static/bundle.min.js",
     "dev": "webpack webpack.config.js --watch",
     "prettify": "prettier --single-quote --trailing-comma es5 ./js/*.js --write",
-    "zip": "zip dist.zip static/*"
+    "zip": "zip dist.zip static/*",
+    "test": "jest"
+  },
+  "babel": {
+     "env": {
+      "test": {
+        "plugins": ["@babel/plugin-transform-modules-commonjs"]
+      }
+    }
   }
 }

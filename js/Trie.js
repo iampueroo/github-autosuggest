@@ -37,7 +37,7 @@ export default class Trie {
 
   contains(word) {
     const node = this.get(word);
-    return node && node.isWord();
+    return Boolean(node && node.isWord());
   }
 
   find(prefix) {
@@ -53,6 +53,9 @@ export default class Trie {
   }
 
   get(word, { case_insensitive } = { case_insensitive: false }) {
+    if (!word) {
+      return null;
+    }
     let node = this.root;
     let real_word = '';
     for (const char of word) {
@@ -69,10 +72,10 @@ export default class Trie {
           node = node.children[upper];
           real_word += upper;
         } else {
-          return;
+          return null;
         }
       } else {
-        return;
+        return null;
       }
     }
     if (case_insensitive) {
@@ -80,9 +83,5 @@ export default class Trie {
       node.real_word = real_word;
     }
     return node;
-  }
-
-  size() {
-    return this.size;
   }
 }

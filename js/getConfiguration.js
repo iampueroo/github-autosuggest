@@ -1,8 +1,6 @@
 import github from './configurations/configuration-github';
 
-const CONFIGURATIONS = [
-	github,
-];
+const CONFIGURATIONS = [github];
 
 export default host => {
   const split_host = host.split('.');
