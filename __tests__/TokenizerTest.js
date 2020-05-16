@@ -1,4 +1,4 @@
-import { explodeByTokens } from '../js/Tokenizer.js';
+import { explodeByTokens, makeRegex } from '../js/Tokenizer.js';
 
 describe('explode by tokens test', () => {
 
@@ -20,4 +20,24 @@ describe('explode by tokens test', () => {
 		).toEqual([' ', ' ']);
 	});	
 
+});
+
+
+describe('creating regex', () => {
+
+	it('should make expected regex string from single tokens', () => {
+		expect(
+			makeRegex(['(',')','[',']','{','}','.',',','`',';']).toString()
+		).toBe("/(\\(|\\)|\\[|\\]|\\{|\\}|\\.|\\,|\\`|\\;)/g")
+	});
+
+	it('should handle lookahead correctly', () => {
+		const parensRegex = ['\\((?!\\))', '(?<!\\()\\)'];
+		const regex = makeRegex(parensRegex);
+		expect(regex.test('()hello')).toBe(false)
+		expect(regex.test('hello()')).toBe(false)
+		expect(regex.test('(hello')).toBe(true)
+		expect(regex.test('hello)')).toBe(true)
+		expect(regex.test('(hello)')).toBe(true)
+	});
 });

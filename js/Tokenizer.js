@@ -1,8 +1,7 @@
 import Token from './Token';
 
 export const explodeByTokens = (s, delimiters) => {
-  const tokenRegex = delimiters.map(t => `\\${t}`).join('|');
-  const regex = new RegExp(`(${tokenRegex})`, 'g');
+  const regex = makeRegex(delimiters);
   const tokens = s.split(regex).filter(t => t !== '');
   let index = 0;
   return tokens.map(token => {
@@ -10,4 +9,13 @@ export const explodeByTokens = (s, delimiters) => {
     index += token.length;
     return newToken;
   });
+};
+
+export const makeRegex = delimiters => {
+  const tokenRegex = delimiters
+    .map(t => {
+      return t.length > 1 ? t : `\\${t}`;
+    })
+    .join('|');
+  return new RegExp(`(${tokenRegex})`, 'g');
 };

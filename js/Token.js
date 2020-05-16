@@ -10,5 +10,6 @@ export default function(_token, _fullString, _startIndex, _endIndex) {
     },
 
     is: word => word === _token,
+    isIndexAtEnd: index => index === _endIndex,
   };
 }

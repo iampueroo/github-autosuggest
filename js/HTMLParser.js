@@ -1,3 +1,5 @@
+import { explodeByTokens } from './Tokenizer';
+
 /**
  * The minimum length in characters of a token to be considered
  * as a suggestion.
@@ -16,8 +18,9 @@ const WORD_TOKENIZER = ' ';
  * @type {String[]}
  */
 export const TOKENIZE_CHARACTERS = [
-  '(',
-  ')',
+  '\\((?!\\))', // "(" but with negative lookahead for ")"
+  '(?<!\\()\\)', // ")" but with negative lookbehind for "("
+  ' ',
   '[',
   ']',
   '{',
@@ -61,14 +64,9 @@ export function tokenizeToWords(s) {
  * @return {String[]} - array of string tokens
  */
 export function tokenize(s) {
-  const replaceString = '()';
-  const replaceWith = '$IGNACIO$';
-  const replaced = s.replace(replaceString, replaceWith);
-  return replaced
-    .replace(COMPILED_TOK_REGEX, ' ')
-    .replace(replaceWith, replaceString)
-    .split(' ')
-    .filter(s => Boolean(s.trim()));
+  return explodeByTokens(s, TOKENIZE_CHARACTERS).filter(
+    t => t.token.trim() !== ''
+  );
 }
 
 /**
@@ -93,7 +91,7 @@ export function getWords(node, configuration) {
     .getWords(node)
     .filter(c => Boolean(c.trim()))
     .forEach(content => {
-      const tokens = tokenize(content).map(t => t.trim());
+      const tokens = tokenize(content).map(t => t.token.trim());
       for (const token of tokens) {
         if (token.length < MIN_LENGTH_OF_TOKEN) {
           continue;

@@ -5,15 +5,15 @@ describe('should test tokenize', () => {
 	const table = [
 		[
 			'const table = getTable();',
-			['const', 'table', '=', 'getTable()']],
+			['const', 'table', '=', 'getTable()', ';']],
 		[
 			'$result = NumberFormatter::parse($this->getValue())',
-			['$result', '=', 'NumberFormatter::parse', '$this->getValue()']
+			['$result', '=', 'NumberFormatter::parse', '(', '$this->getValue()', ')']
 		]
 	];
 	test.each(table)(
 		'Tokenize: %s',
-		(input, expected) => expect(tokenize(input)).toEqual(expected)
+		(input, expected) => expect(tokenize(input).map(t => t.token)).toEqual(expected)
 	)
 });
 

@@ -1,10 +1,50 @@
 import { tokenize, TOKENIZE_CHARACTERS } from './HTMLParser';
-import { explodeByTokens } from './Tokenizer';
+import { explodeByTokens, makeRegex } from './Tokenizer';
 import Token from './Token';
 
 export const getCurrentToken = textarea => {
   const startIndex = textarea.selectionStart;
-  return getTokenFromStringByIndex(textarea.value, startIndex);
+  const token = getTokenFromStringByIndex(textarea.value, startIndex);
+  if (token.isEmpty) {
+    // Nothing to do.
+    return token;
+  }
+  if (!token.isIndexAtEnd(startIndex)) {
+    // Return "empty" token if selection index is not
+    // at the end of the word
+    return new Token('', textarea.value, startIndex, startIndex);
+  }
+  return cleanToken(textarea, token);
+};
+
+const cleanToken = (textarea, token) => {
+  const humanFriendlyTokens = tokenize(token.token);
+  if (humanFriendlyTokens.length === 0) {
+    return new Token(
+      '',
+      textarea.value,
+      textarea.selectionStart,
+      textarea.selectionStart
+    );
+  }
+  if (humanFriendlyTokens.length === 1) {
+    return token;
+  }
+  const lastToken = humanFriendlyTokens[humanFriendlyTokens.length - 1];
+  if (makeRegex(TOKENIZE_CHARACTERS).test(lastToken.token)) {
+    return new Token(
+      '',
+      textarea.value,
+      textarea.selectionStart,
+      textarea.selectionStart
+    );
+  }
+  return new Token(
+    lastToken.token,
+    textarea.value,
+    token.startIndex + lastToken.startIndex,
+    token.startIndex + lastToken.startIndex + lastToken.length
+  );
 };
 
 export const getTokenFromStringByIndex = (s, index) => {
