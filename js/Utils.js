@@ -13,6 +13,12 @@ export function log(...args) {
   }
 }
 
+export function warn(...args) {
+  if (window.logmeplease) {
+    console.warn(...args);
+  }
+}
+
 export function time() {
   return new Date().getTime();
 }
@@ -33,4 +39,15 @@ export function clean(s) {
 
 export function getNextCharacter(textarea) {
   return textarea.value[textarea.selectionStart];
+}
+
+/**
+ * Utility function that returns a selector for all given classes.
+ * No nesting.
+ *
+ * @param  {String[]} classes - array of class names to select
+ * @return {String} joined selector for all given classes
+ */
+export function toSelector(classes) {
+  return classes.map(c => `.${c}`).join(',');
 }

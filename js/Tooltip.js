@@ -1,7 +1,7 @@
 import getCaretCoordinates from './textarea-caret-position';
 import { totalOffset } from './Utils';
 import { tokenize } from './HTMLParser';
-import { getCurrentWord } from './Textarea';
+import { getCurrentToken } from './Textarea';
 
 const CLASSNAME = 'ignacio';
 const CLASSNAME_LABEL = `${CLASSNAME}-label`;
@@ -42,7 +42,7 @@ export const unhide = () => {
 };
 
 const getIndexOfStartOfWord = textarea => {
-  return textarea.selectionEnd - getCurrentWord(textarea).length;
+  return textarea.selectionEnd - getCurrentToken(textarea).length;
 };
 
 export const render = (word, textarea) => {

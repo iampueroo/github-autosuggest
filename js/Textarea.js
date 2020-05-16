@@ -1,15 +1,29 @@
-import { tokenize } from './HTMLParser';
+import { tokenize, TOKENIZE_CHARACTERS } from './HTMLParser';
+import { explodeByTokens } from './Tokenizer';
+import Token from './Token';
 
-export const getCurrentWord = textarea => {
+export const getCurrentToken = textarea => {
   const startIndex = textarea.selectionStart;
+  return getTokenFromStringByIndex(textarea.value, startIndex);
+};
+
+export const getTokenFromStringByIndex = (s, index) => {
   let charIndex = 0;
-  for (const word of tokenize(textarea.value)) {
-    if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
-      return word;
+  let tokens = explodeByTokens(s, [' ']);
+  for (const token of tokens) {
+    const indexAfterToken = charIndex + token.length; // Index after token
+    if (index >= charIndex && index < indexAfterToken) {
+      return token;
     }
-    charIndex += word.length + 1; // 1 due to the space
+    if (index === indexAfterToken && !token.is(' ')) {
+      // If index is at the end of the word, still use the word
+      // unless it's an empty space
+      return token;
+    }
+    charIndex += token.length;
   }
-  throw new Error('shit');
+  // Return empty token at end of string index
+  return new Token('', s, s.length, s.length);
 };
 
 export const replaceCurrentWord = (textarea, replace) => {

@@ -1,4 +1,5 @@
 import Trie from '../js/Trie.js';
+
 describe('Testing Trie Build', () => {
 
 	it('Should initialize empty Trie', () => {

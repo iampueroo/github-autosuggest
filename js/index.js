@@ -6,7 +6,7 @@ import * as Textarea from './Textarea';
 import { getWords, tokenize, getBlobWords } from './HTMLParser';
 import getConfiguration from './getConfiguration';
 
-const PageConfiguration = getConfiguration(window.location.host);
+const pageConfiguration = getConfiguration(window.location.host);
 
 let suggestedWord = '';
 let justAdded = false;
@@ -30,7 +30,7 @@ const onEnter = (event, textarea, trie) => {
   if (!suggestedWord) {
     return;
   }
-  if (suggestedWord === Textarea.getCurrentWord(textarea)) {
+  if (Textarea.getCurrentToken(textarea).is(suggestedWord)) {
     return;
   }
   // We're taking over the event.
@@ -39,13 +39,6 @@ const onEnter = (event, textarea, trie) => {
 
   let word = suggestedWord;
   let closedOffset = 0; // for new index
-  if (Textarea.needsClosingBacktick(textarea)) {
-    word += '`';
-    closedOffset = 1;
-  } else if (Textarea.needsBothBackticks(textarea)) {
-    word = '`' + word + '`';
-    closedOffset = 1;
-  }
   prevState = { value: textarea.value, index: textarea.selectionEnd };
   textarea.value = Textarea.replaceCurrentWord(textarea, word);
   textarea.selectionEnd =
@@ -77,13 +70,12 @@ const onBackTick = event => {
 };
 
 const suggest = (textarea, trie) => {
-  const currentWord = Textarea.getCurrentWord(textarea);
-
-  if (!currentWord || /^:|^#|^@/.test(currentWord)) {
+  const currentToken = Textarea.getCurrentToken(textarea);
+  if (currentToken.isEmpty || /^:|^#|^@/.test(currentToken.token)) {
     Tooltip.remove();
     return;
   }
-
+  const currentWord = currentToken.token;
   let words = trie.find(currentWord);
   if (words[0] === currentWord) {
     words = words.slice(1);
@@ -99,7 +91,7 @@ const suggest = (textarea, trie) => {
 
 const onKeyUp = (textarea, trie) => {
   suggestedWord = '';
-  if (!PageConfiguration.isCommentTextArea(textarea)) {
+  if (!pageConfiguration.isCommentTextArea(textarea)) {
     Tooltip.remove();
     return;
   }
@@ -125,21 +117,23 @@ const onUndo = event => {
 
 const onFocus = event => {
   const textarea = event.target;
-  if (!PageConfiguration.isCommentTextArea(event.target)) {
+  if (!pageConfiguration.isCommentTextArea(event.target)) {
     return;
   }
-  if (textarea.__github_autosugges_trie) {
+  if (textarea.__github_autosuggest_trie) {
     // We already have processed this
     return;
   }
   const start = Utils.time();
   const trie = new Trie();
-  trie.addWords(getWords(window.document, PageConfiguration));
-  const commented_line = PageConfiguration.getCommentLine(textarea);
+  trie.addWords(getWords(window.document, pageConfiguration));
+  const commented_line = pageConfiguration.getCommentLine(textarea);
   if (commented_line) {
-    const special_words = getWords(commented_line, PageConfiguration);
+    const special_words = getWords(commented_line, pageConfiguration);
     Utils.log(`Found ${special_words.length} tokens from commented line`);
     trie.markSpecial(special_words);
+  } else {
+    Utils.warn('No commented line found');
   }
 
   Utils.log(`Trie built ${Utils.time() - start}ms (${trie.size} words)`);
@@ -163,11 +157,11 @@ const onFocus = event => {
   textarea.addEventListener('click', event => onKeyUp(event.target, trie));
   textarea.addEventListener('scroll', Tooltip.remove);
   Tooltip.onClick(event => onEnter(event, textarea, trie));
-  textarea.__github_autosugges_trie = true;
+  textarea.__github_autosuggest_trie = true;
 };
 
 const onFocusOut = event => {
-  if (!PageConfiguration.isCommentTextArea(event.target)) {
+  if (!pageConfiguration.isCommentTextArea(event.target)) {
     return;
   }
   Tooltip.remove();
