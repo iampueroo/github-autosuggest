@@ -94,7 +94,6 @@ export function process(s) {
   const words = [];
   const tokens = tokenize(s);
   for (const token of tokens) {
-    debugger;
     if (token.length < MIN_LENGTH_OF_TOKEN) {
       continue;
     }
