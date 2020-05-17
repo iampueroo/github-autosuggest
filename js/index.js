@@ -91,7 +91,10 @@ const suggest = (textarea, trie) => {
 
 const onKeyUp = (textarea, trie) => {
   suggestedWord = '';
-  if (!pageConfiguration.isCommentTextArea(textarea)) {
+  if (
+    !pageConfiguration.isCommentTextArea(textarea) ||
+    !Textarea.isInOpenBacktick(textarea)
+  ) {
     Tooltip.remove();
     return;
   }

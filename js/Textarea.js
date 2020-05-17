@@ -80,20 +80,3 @@ export const replaceCurrentWord = (textarea, replace) => {
 export const isInOpenBacktick = textarea => {
   return textarea.value.split(/`/g).length % 2 === 0;
 };
-
-export const needsClosingBacktick = textarea => {
-  const string_after_cursor = textarea.value.slice(textarea.selectionStart);
-  return string_after_cursor.indexOf('`') < 0 && isInOpenBacktick(textarea);
-};
-
-export const needsBothBackticks = textarea => {
-  const value = textarea.value;
-  if (value.indexOf('`') < 0) {
-    return true;
-  }
-  const index = textarea.selectionStart;
-  return (
-    value.slice(index).split(/`/g).length % 2 === 1 &&
-    value.slice(0, index).split(/`/g).length % 2 === 1
-  );
-};

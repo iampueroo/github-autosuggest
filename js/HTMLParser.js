@@ -6,7 +6,7 @@ import Token from './Token';
  * as a suggestion.
  * @type {Number}
  */
-const MIN_LENGTH_OF_TOKEN = 5;
+const MIN_LENGTH_OF_TOKEN = 3;
 
 /**
  * Delimiter of a word
