@@ -1,4 +1,4 @@
-import { getCurrentToken, replaceCurrentWord } from '../js/TextArea';
+import { getCurrentToken, replaceCurrentWord } from '../js/Textarea';
 
 describe('Testing TextArea', () => {
 
