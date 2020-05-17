@@ -1,4 +1,4 @@
-import { tokenize, subtokenizeFromString} from '../js/HTMLParser';
+import { tokenize, subtokenizeFromString, process } from '../js/HTMLParser';
 import { getTokenFromStringByIndex } from '../js/Textarea';
 
 describe('should test tokenize', () => {
@@ -17,16 +17,17 @@ describe('should test tokenize', () => {
 	)
 });
 
-		
 describe('should test split', () => {
 	const table = [
-		['NumberFormatter::parse', ['NumberFormatter', 'parse']],
-		['$this->getValue()', ['$this', 'getValue()']],
+		['NumberFormatter::parse', ['NumberFormatter::parse', 'NumberFormatter', 'parse']],
+		['$this->getValue()', ['$this->getValue()', '$this', 'getValue()']],
+		['!Textarea.isInOpenBacktick', ['!Textarea', 'Textarea', 'isInOpenBacktick']],
+		['!Boolean', ['!Boolean', 'Boolean']],
 	];
 
 	test.each(table)(
-		'subtokenizeFromString: %s',
-		(input, expected) => expect(subtokenizeFromString(input).map(t => t.token)).toEqual(expected)
+		'process: %s',
+		(input, expected) => expect(process(input)).toEqual(expected)
 	)	
 })
 

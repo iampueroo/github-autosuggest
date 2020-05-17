@@ -39,7 +39,7 @@ export const TOKENIZE_CHARACTERS = [
  *
  * @type {RegExp}
  */
-const SPLIT_REGEX = ['\\:\\:', '\\-\\>', '\\=\\>', '\\!'];
+const SPLIT_REGEX = ['\\:\\:', '\\-\\>', '\\=\\>', '\\!', '\\.'];
 
 const COMPILED_TOK_REGEX = new RegExp(
   TOKENIZE_CHARACTERS.map(c => `\\${c}`).join('|'),
@@ -84,7 +84,27 @@ export function subtokenizeFromString(string) {
 export function subtokenize(token) {
   const subtokens = tokenizeToken(token, SPLIT_REGEX);
   const regex = makeRegex(SPLIT_REGEX);
+  if (subtokens.length === 1) {
+    return [];
+  }
   return subtokens.filter(t => !regex.test(t.token));
+}
+
+export function process(s) {
+  const words = [];
+  const tokens = tokenize(s);
+  for (const token of tokens) {
+    debugger;
+    if (token.length < MIN_LENGTH_OF_TOKEN) {
+      continue;
+    }
+    words.push(token.token);
+    const split_words = subtokenize(token);
+    if (split_words.length) {
+      split_words.forEach(w => words.push(w.token.trim()));
+    }
+  }
+  return words;
 }
 
 /**
@@ -95,22 +115,12 @@ export function subtokenize(token) {
  */
 export function getWords(node, configuration) {
   // First start with the best content, these are language constructs or functions
-  const words = [];
-  configuration
-    .getWords(node)
-    .filter(c => Boolean(c.trim()))
-    .forEach(content => {
-      const tokens = tokenize(content);
-      for (const token of tokens) {
-        if (token.length < MIN_LENGTH_OF_TOKEN) {
-          continue;
-        }
-        words.push(token.token);
-        const split_words = subtokenize(token);
-        if (split_words.length > 1) {
-          split_words.forEach(w => words.push(w.token.trim()));
-        }
-      }
-    });
+  let words = [];
+  const pageWords = new window.Set(configuration.getWords(node));
+  pageWords.forEach(word => {
+    if (Boolean(word.trim())) {
+      words = words.concat(process(word));
+    }
+  });
   return words;
 }
