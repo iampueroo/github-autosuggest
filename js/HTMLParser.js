@@ -1,4 +1,5 @@
-import { explodeByTokens } from './Tokenizer';
+import { explodeByTokens, tokenizeToken, makeRegex } from './Tokenizer';
+import Token from './Token';
 
 /**
  * The minimum length in characters of a token to be considered
@@ -38,7 +39,7 @@ export const TOKENIZE_CHARACTERS = [
  *
  * @type {RegExp}
  */
-const SPLIT_REGEX = /::|->|=>|\!/g;
+const SPLIT_REGEX = ['\\:\\:', '\\-\\>', '\\=\\>', '\\!'];
 
 const COMPILED_TOK_REGEX = new RegExp(
   TOKENIZE_CHARACTERS.map(c => `\\${c}`).join('|'),
@@ -53,10 +54,6 @@ const COMPILED_TOK_REGEX = new RegExp(
  * @return {String} joined selector for all given classes
  */
 const toSelector = classes => classes.map(c => `.${c}`).join(',');
-
-export function tokenizeToWords(s) {
-  return s.split(WORD_TOKENIZER);
-}
 
 /**
  * Convert a string
@@ -74,8 +71,20 @@ export function tokenize(s) {
  * @param  {String} s - token to split
  * @return {String[]} - array of string tokens
  */
+export function subtokenizeFromString(string) {
+  const token = new Token(string, string, 0, string.length);
+  return subtokenize(token);
+}
+
+/**
+ * Splits a token into subtokens for additional elements to add to trie
+ * @param  {String} s - token to split
+ * @return {String[]} - array of string tokens
+ */
 export function subtokenize(token) {
-  return token.split(SPLIT_REGEX);
+  const subtokens = tokenizeToken(token, SPLIT_REGEX);
+  const regex = makeRegex(SPLIT_REGEX);
+  return subtokens.filter(t => !regex.test(t.token));
 }
 
 /**
@@ -91,15 +100,15 @@ export function getWords(node, configuration) {
     .getWords(node)
     .filter(c => Boolean(c.trim()))
     .forEach(content => {
-      const tokens = tokenize(content).map(t => t.token.trim());
+      const tokens = tokenize(content);
       for (const token of tokens) {
         if (token.length < MIN_LENGTH_OF_TOKEN) {
           continue;
         }
-        words.push(token);
+        words.push(token.token);
         const split_words = subtokenize(token);
         if (split_words.length > 1) {
-          split_words.forEach(w => words.push(w.trim()));
+          split_words.forEach(w => words.push(w.token.trim()));
         }
       }
     });

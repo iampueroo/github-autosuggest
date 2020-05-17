@@ -1,5 +1,5 @@
 import { tokenize, TOKENIZE_CHARACTERS } from './HTMLParser';
-import { explodeByTokens, makeRegex } from './Tokenizer';
+import { explodeByTokens, tokenizeToken, makeRegex } from './Tokenizer';
 import Token from './Token';
 
 export const getCurrentToken = textarea => {
@@ -18,7 +18,7 @@ export const getCurrentToken = textarea => {
 };
 
 const cleanToken = (textarea, token) => {
-  const humanFriendlyTokens = tokenize(token.token);
+  const humanFriendlyTokens = tokenizeToken(token, TOKENIZE_CHARACTERS);
   if (humanFriendlyTokens.length === 0) {
     return new Token(
       '',
@@ -39,12 +39,7 @@ const cleanToken = (textarea, token) => {
       textarea.selectionStart
     );
   }
-  return new Token(
-    lastToken.token,
-    textarea.value,
-    token.startIndex + lastToken.startIndex,
-    token.startIndex + lastToken.startIndex + lastToken.length
-  );
+  return lastToken;
 };
 
 export const getTokenFromStringByIndex = (s, index) => {

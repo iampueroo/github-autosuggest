@@ -1,4 +1,4 @@
-import { tokenize, subtokenize } from '../js/HTMLParser';
+import { tokenize, subtokenizeFromString} from '../js/HTMLParser';
 import { getTokenFromStringByIndex } from '../js/Textarea';
 
 describe('should test tokenize', () => {
@@ -25,8 +25,8 @@ describe('should test split', () => {
 	];
 
 	test.each(table)(
-		'Subtokenize: %s',
-		(input, expected) => expect(subtokenize(input)).toEqual(expected)
+		'subtokenizeFromString: %s',
+		(input, expected) => expect(subtokenizeFromString(input).map(t => t.token)).toEqual(expected)
 	)	
 })
 

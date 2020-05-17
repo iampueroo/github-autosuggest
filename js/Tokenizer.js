@@ -1,11 +1,21 @@
 import Token from './Token';
 
 export const explodeByTokens = (s, delimiters) => {
+  const token = new Token(s, s, 0, s.length);
+  return tokenizeToken(token, delimiters);
+};
+
+export const tokenizeToken = (token, delimiters) => {
   const regex = makeRegex(delimiters);
-  const tokens = s.split(regex).filter(t => t !== '');
-  let index = 0;
+  const tokens = token.token.split(regex).filter(t => t !== '');
+  let index = token.startIndex;
   return tokens.map(token => {
-    const newToken = new Token(token, s, index, index + token.length);
+    const newToken = new Token(
+      token,
+      token.fullString,
+      index,
+      index + token.length
+    );
     index += token.length;
     return newToken;
   });

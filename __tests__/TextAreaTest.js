@@ -28,4 +28,15 @@ describe('Testing TextArea', () => {
 		expect(currentToken.endIndex).toBe(7);
 	});
 
+	it('should deal well with subtokens of more than 1', () => {
+		const line = 'one `v`a';
+		const textarea = {
+			selectionStart: line.length,
+			value: line, 
+		};
+		const currentToken = getCurrentToken(textarea);
+		expect(currentToken.token).toBe('a');
+		expect(currentToken.startIndex).toBe(7);
+		expect(currentToken.endIndex).toBe(8);
+	});
 });
