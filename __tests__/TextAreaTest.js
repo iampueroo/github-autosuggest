@@ -1,4 +1,4 @@
-import { getCurrentToken } from '../js/TextArea.js';
+import { getCurrentToken, replaceCurrentWord } from '../js/TextArea.js';
 
 describe('Testing TextArea', () => {
 
@@ -39,4 +39,26 @@ describe('Testing TextArea', () => {
 		expect(currentToken.startIndex).toBe(7);
 		expect(currentToken.endIndex).toBe(8);
 	});
+});
+
+describe('Testing TextArea Insert', () => {
+	
+	const table = [
+		['var a = g', 'getFunction()', 'var a = getFunction()', null],
+		['Try `c', 'const', 'Try `const', null],
+		['Try `compu', 'computer', 'Try `computer', 8],
+		['Try `c', 'Trying', 'Trying `c', 3]
+	];
+	test.each(table)(
+		"Inserting %",
+		(value, replacer, expected, selectionStart) => {
+			const textarea = {
+				value,
+				selectionStart: Number.isInteger(selectionStart) ? selectionStart : value.length,
+			};
+			const newValue = replaceCurrentWord(textarea, replacer);
+			expect(newValue).toBe(expected);
+		}
+	);
+
 });

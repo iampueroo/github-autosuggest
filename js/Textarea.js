@@ -63,19 +63,18 @@ export const getTokenFromStringByIndex = (s, index) => {
 
 export const replaceCurrentWord = (textarea, replace) => {
   const startIndex = textarea.selectionStart;
-  let charIndex = 0;
-  let currentValue = tokenize(textarea.value);
-  for (const word of currentValue) {
-    if (startIndex >= charIndex && startIndex <= charIndex + word.length) {
+  let tokens = tokenize(textarea.value);
+  for (const token of tokens) {
+    if (
+      startIndex >= token.startIndex &&
+      startIndex <= token.startIndex + token.length
+    ) {
       let splitValue = textarea.value.split('');
-      splitValue.splice(charIndex, word.length, ...replace.split(''));
+      splitValue.splice(token.startIndex, token.length, ...replace.split(''));
       return splitValue.join('');
     }
-    charIndex += word.length + 1; // 1 due to the space
   }
-  console.error('textarea', textarea.value);
-  console.error('replace', replace);
-  throw new Error('oops');
+  throw new Error('Unexpected state when replacing textarea value');
 };
 
 export const isInOpenBacktick = textarea => {
