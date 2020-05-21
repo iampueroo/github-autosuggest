@@ -1,0 +1,80 @@
+html, body, .main-container {
+	height: 100%;
+	color: #444;
+	margin: 0;
+	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif
+}
+
+h1 {
+	font-size: 40px;
+}
+.main-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.main-container .section {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (orientation: landscape) {
+	html, body, .main-container {
+		box-sizing: border-box;
+		height: 100%;
+	}
+	.section-left {
+		padding-left: 40px;
+		padding-right: 20px;
+	}
+	.section-right {
+		padding-left: 20px;
+		padding-right: 40px;
+	}
+}
+
+@media (orientation: portrait) {
+	body {
+		margin: 30px 50px;
+	}
+	.main-container {
+		flex-direction: column;
+	    justify-content: initial;
+	}
+	.main-container .section {
+		width: auto;
+		height: auto;
+	}
+}
+
+
+.section-left-content {
+    margin-bottom: 21px;
+}
+
+.byline {
+	opacity: 5;
+}
+
+video {
+	max-width: 100%;
+}
+
+.button-install {
+    padding: 10px;
+    display: inline-block;
+    border: solid 1px;
+    background-color: green;
+    color: white;
+    border-radius: 8px;
+}
+
+.button-install:hover {
+	opacity: 0.9;
+	cursor: pointer;
+}
