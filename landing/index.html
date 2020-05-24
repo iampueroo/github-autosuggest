@@ -10,30 +10,36 @@
     <link rel="stylesheet" href="./index.css">
 </head>
 <body>
-	<div class='main-container'>
-		<div class='section section-left'>
-			<div class='section-inner'>
-				<h1>Autocomplete for Github and Gitlab comments</h1>
-				<p>A wee lil browser extension for faster code reviews. <image src="./icon-github.png" width="15px">
-			</p>
-				<div class="section-left-content">
-					<div class="button-install"><span>Add to Chrome - It's Free</span></div>
+	<div class='page-wrapper'>
+		<div class='main-container'>
+			<div class='section section-left'>
+				<div class='section-inner'>
+					<h1>Autocomplete for Github code review</h1>
+					<p>A wee lil browser extension for faster code reviews.
+				</p>
+					<div class="section-left-content">
+						<a href="https://chrome.google.com/webstore/detail/github-comment-autosugges/cckhnpaedijpapngkpjodffjfiemhlnf">
+							<span class="button-install"><span>Add to Chrome - It's Free</span></span>
+						</a>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class='section section-right'>
-			<div class='section-inner'>
-				<h4>What is this?</h4>
-				<p>A browser extension that adds autocomplete functionality when commenting on Github pull requests and commits. The suggestions are generated dynamically from the diff, so they're always relevant.</p>
-				<div class='section-left-content main-video'>
-					<video playsinline autoplay muted loop>
-						<source src="./github-autocomplete.mov" type="video/mp4">
-					</video>
+			<div class='section section-right'>
+				<div class='section-inner'>
+					<h3>What is this?</h3>
+					<p>A browser extension that adds autocomplete functionality when commenting on Github pull requests and commits. The suggestions are generated dynamically from the diff, so they're always relevant. Check it out: </p>
+					<div class='section-left-content main-video'>
+						<video playsinline autoplay muted loop>
+							<source src="./github-autocomplete.mov" type="video/mp4">
+						</video>
+					</div>
+					<h3>How does it work?</h3>
+					<p>The browser extension generates a prefix tree of all the relevant tokens from the diff, but only <em>after</em> clicking the comment button. After that, an autocomplete tooltip appears when the current word being typed is from the diff.</p>
+					<h3>What about privacy?</h3>
+					<p>The extension only requires permission to read from and write to the DOM of <code>/commit/</code> and <code>/pull/</code> paths. The extension cannot make any requests to GitHub as you nor does it execute any requests at all.</p>
+					<h3>Who made this, why, and show me the code.</h3>
+					<p><a href="https://github.com/iampueroo/github-autosuggest">Autocomplete for GitHub</a> is maintained by me, <a href="https://github.com/iampueroo">iampueroo</a>. I made this extension after getting annoyed at retyping code when providing code reviews.</p>
 				</div>
-				<h4>How does it work?</h4>
-				<p>The browser extension generates a prefix tree of all the relevant tokens from the diff, but only <em>after</em> clicking the comment button. After that, an autocomplete tooltip appears when the current word being typed is from the diff.</p>
-				<h4>Who made this, why, and show me the code.</h4>
-				<p><a href="https://github.com/iampueroo">I did.</a> I got tired of rewriting code when providing feedback on PRs.</p>
 			</div>
 		</div>
 	</div>
