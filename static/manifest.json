@@ -2,7 +2,10 @@
    "content_scripts": [ {
       "js": ["bundle.min.js"],
       "css": ["style.css"],
-      "matches": [ "https://github.com/*"]
+      "matches": [
+         "https://github.com/*/pull/*",
+         "https://github.com/*/commit/*"
+      ]
    } ],
    "description": "Autosuggest for Github commit comments",
    "homepage_url": "https://github.com",
