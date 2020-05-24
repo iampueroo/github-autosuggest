@@ -7,11 +7,11 @@
          "https://github.com/*/commit/*"
       ]
    } ],
-   "description": "Adds AutoComplete to Github when commenting on commits and pull requests.",
+   "description": "Adds autocomplete functionality, sourced from the diff, when reviewing GitHub commits and pull requests.",
    "homepage_url": "https://github.com",
    "manifest_version": 2,
    "minimum_chrome_version": "20.0",
-   "name": "Github Comment Autosuggest",
-   "permissions": [ "https://github.com/*"],
+   "name": "AutoComplete for GitHub",
+   "permissions": [],
    "version": "0.61"
 }
