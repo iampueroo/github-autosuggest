@@ -7,11 +7,15 @@
          "https://github.com/*/commit/*"
       ]
    } ],
+   "icons": {
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+   },
    "description": "Adds autocomplete functionality, sourced from the diff, when reviewing GitHub commits and pull requests.",
-   "homepage_url": "https://github.com",
+   "homepage_url": "https://github.com/iampueroo/github-autosuggest",
    "manifest_version": 2,
    "minimum_chrome_version": "20.0",
-   "name": "AutoComplete for GitHub",
+   "name": "GitHub Code Review Autocomplete",
    "permissions": [],
-   "version": "0.61"
+   "version": "0.62"
 }
