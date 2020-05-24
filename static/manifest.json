@@ -7,7 +7,7 @@
          "https://github.com/*/commit/*"
       ]
    } ],
-   "description": "Autosuggest for Github commit comments",
+   "description": "Adds AutoComplete to Github when commenting on commits and pull requests.",
    "homepage_url": "https://github.com",
    "manifest_version": 2,
    "minimum_chrome_version": "20.0",
