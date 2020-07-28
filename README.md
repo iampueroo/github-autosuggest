@@ -2,7 +2,7 @@
 
 A dynamic autosuggest/autocomplete browser extension for Github comments, built on-the-fly from the diff. Use it for speedier commit comments and pull request reviews.
 
-![](https://media.giphy.com/media/3ohhwqYt4w4G4ZGfpS/giphy.gif)
+![](https://i.imgur.com/9RmUiL2.gif)
 
 ### Prerequisites
 To install the extension, all you need is an up-to-date Chrome browser (I'll get to Firefox and Safari soon, apologies). 
