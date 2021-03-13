@@ -92,6 +92,7 @@ const suggest = (textarea, trie) => {
 const onKeyUp = (textarea, trie) => {
   suggestedWord = '';
   if (
+    !textarea ||
     !pageConfiguration.isCommentTextArea(textarea) ||
     !Textarea.isInOpenBacktick(textarea)
   ) {
@@ -120,7 +121,7 @@ const onUndo = event => {
 
 const onFocus = event => {
   const textarea = event.target;
-  if (!pageConfiguration.isCommentTextArea(event.target)) {
+  if (!textarea || !pageConfiguration.isCommentTextArea(textarea)) {
     return;
   }
   if (textarea.__github_autosuggest_trie) {
@@ -164,7 +165,7 @@ const onFocus = event => {
 };
 
 const onFocusOut = event => {
-  if (!pageConfiguration.isCommentTextArea(event.target)) {
+  if (!event.target || !pageConfiguration.isCommentTextArea(event.target)) {
     return;
   }
   Tooltip.remove();
