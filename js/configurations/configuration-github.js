@@ -4,7 +4,6 @@ const best_classes = ['pl-smi', 'pl-c1', 'pl-k', 'pl-en', 'pl-e', 'pl-v'];
 
 export default {
   HOST: 'github.com',
-  COMMENT_CLASSES: ['pl-c'],
   isCommentTextArea: el => el && el.classList.contains('comment-form-textarea'),
   getCommentLine: textarea => {
     const inline_comment_div = Utils.getFirstParent(
