@@ -1,6 +1,7 @@
 import github from './configurations/configuration-github';
+import gitlab from './configurations/configuration-gitlab';
 
-const CONFIGURATIONS = [github];
+const CONFIGURATIONS = [github, gitlab];
 
 export default host => {
   const split_host = host.split('.');
