@@ -13,6 +13,7 @@ const TOKEN_CLASSES = [
     'nf', // php static functions
     'nd', // Java class
     'nc', // Java annotations
+    'kn', // Java key word "import"
 ];
 
 export default {

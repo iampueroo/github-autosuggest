@@ -1,9 +1,8 @@
 import Trie from './Trie';
-import getCaretCoordinates from './textarea-caret-position';
 import * as Tooltip from './Tooltip';
 import * as Utils from './Utils';
 import * as Textarea from './Textarea';
-import { getWords, tokenize, getBlobWords } from './HTMLParser';
+import { getWords } from './HTMLParser';
 import getConfiguration from './getConfiguration';
 
 const pageConfiguration = getConfiguration(window.location.host);

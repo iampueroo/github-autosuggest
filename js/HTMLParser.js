@@ -41,11 +41,6 @@ export const TOKENIZE_CHARACTERS = [
  */
 const SPLIT_REGEX = ['\\:\\:', '\\-\\>', '\\=\\>', '\\!', '\\.'];
 
-const COMPILED_TOK_REGEX = new RegExp(
-  TOKENIZE_CHARACTERS.map(c => `\\${c}`).join('|'),
-  'g'
-);
-
 /**
  * Utility function that returns a selector for all given classes.
  * No nesting.
