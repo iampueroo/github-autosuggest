@@ -1,6 +1,9 @@
 # github-autosuggest
+<p align="center"><strong>Now with ✨Gitlab✨ support!</strong></p>
+<p align="center">Quick install? Get it 👉 <a href="https://chrome.google.com/webstore/detail/github-code-review-autoco/cckhnpaedijpapngkpjodffjfiemhlnf">Chrome</a>. Firefox support coming soon (see <a href="https://github.com/iampueroo/github-autosuggest/issues/15">issue</a>).</p>
+ 
 
-A dynamic autosuggest/autocomplete browser extension for Github comments, built on-the-fly from the diff. Use it for speedier commit comments and pull request reviews.
+A dynamic autosuggest/autocomplete browser extension for Github and Gitlab comments, built on-the-fly from the diff. Use it for speedier commit comments and pull request reviews.
 
 ![](https://i.imgur.com/9RmUiL2.gif)
 
